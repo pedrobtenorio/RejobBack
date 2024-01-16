@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/0000000008_fix_sequences.sql
   - include:
       file: db/changelog/0000000009_alter_job.sql
+  - include:
+      file: db/changelog/0000000010_add_attrs_job.sql

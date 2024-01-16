@@ -1,6 +1,7 @@
 package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Dto.JobCreate;
+import com.efjpr.rejob.domain.Dto.JobResponse;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.service.JobService;
 import lombok.AllArgsConstructor;
@@ -27,12 +28,12 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> getAllJobs() {
+    public ResponseEntity<List<JobResponse>> getAllJobs() {
         return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+    public ResponseEntity<JobResponse> getJobById(@PathVariable Long id) {
         return new ResponseEntity<>(jobService.getJobById(id), HttpStatus.OK);
     }
 
