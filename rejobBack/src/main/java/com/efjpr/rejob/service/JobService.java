@@ -1,6 +1,7 @@
 package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.Collaborator;
+import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
 import com.efjpr.rejob.domain.Job;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,10 @@ public class JobService {
 
         // Convert Job to JobResponse
         return convertToJobResponse(job);
+    }
+
+    public List<Job> getJobByCompanyId(long companyId) {
+        return jobRepository.findByCompanyId(companyId);
     }
 
     public Job updateJob(Long id, Job updatedJob) {
@@ -90,6 +96,8 @@ public class JobService {
                 .educationLevel(jobPayload.getEducationLevel())
                 .employmentContractType(jobPayload.getEmploymentContractType())
                 .jobStatus(jobPayload.getJobStatus())
+                .createdAt(new Date(System.currentTimeMillis()))
+                .updatedAt(new Date(System.currentTimeMillis()))
                 .build();
     }
 

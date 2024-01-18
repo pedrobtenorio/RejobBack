@@ -23,7 +23,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String companyLocation;
+    private Location companyLocation;
     private String jobType;
     private String categories;
 
@@ -48,5 +48,11 @@ public class Job {
 
     @Enumerated(EnumType.STRING)
     private JobStatus jobStatus;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
 }

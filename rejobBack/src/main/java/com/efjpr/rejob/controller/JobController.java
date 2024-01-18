@@ -1,5 +1,6 @@
 package com.efjpr.rejob.controller;
 
+import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
 import com.efjpr.rejob.domain.Job;
@@ -30,6 +31,11 @@ public class JobController {
     @GetMapping
     public ResponseEntity<List<JobResponse>> getAllJobs() {
         return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
+    }
+
+    @GetMapping("job-list/{companyId}")
+    public ResponseEntity<List<Job>> getJobByCompanyId(@PathVariable Long companyId) {
+        return new ResponseEntity<>(jobService.getJobByCompanyId(companyId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

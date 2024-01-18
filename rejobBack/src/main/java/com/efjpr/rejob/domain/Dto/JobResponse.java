@@ -4,6 +4,7 @@ import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Enums.EducationLevel;
 import com.efjpr.rejob.domain.Enums.EmploymentContractType;
 import com.efjpr.rejob.domain.Enums.JobStatus;
+import com.efjpr.rejob.domain.Location;
 import com.efjpr.rejob.domain.SalaryRange;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 public class JobResponse {
 
     private Long id;
-    private String companyLocation;
+    private Location companyLocation;
     private String jobType;
     private String categories;
     private Collaborator contactPerson;
