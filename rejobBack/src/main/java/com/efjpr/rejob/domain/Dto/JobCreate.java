@@ -28,6 +28,8 @@ public class JobCreate {
     private SalaryRange salaryRange;
     private Date createdAt;
     private Date updatedAt;
+    private String requiredExperience;
+    private String responsibilities;
 
     @Enumerated(EnumType.STRING)
     private EducationLevel educationLevel;
