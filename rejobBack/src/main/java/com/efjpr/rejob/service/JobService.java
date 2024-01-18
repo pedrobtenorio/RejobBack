@@ -96,6 +96,8 @@ public class JobService {
                 .educationLevel(jobPayload.getEducationLevel())
                 .employmentContractType(jobPayload.getEmploymentContractType())
                 .jobStatus(jobPayload.getJobStatus())
+                .requiredExperience(jobPayload.getRequiredExperience())
+                .responsibilities(jobPayload.getResponsibilities())
                 .createdAt(new Date(System.currentTimeMillis()))
                 .updatedAt(new Date(System.currentTimeMillis()))
                 .build();
