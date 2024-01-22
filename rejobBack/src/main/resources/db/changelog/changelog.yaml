@@ -25,3 +25,5 @@ databaseChangeLog:
       file: db/changelog/0000000010_add_attrs_job.sql
   - include:
       file: db/changelog/0000000011_add_attrs_job_2.sql
+  - include:
+      file: db/changelog/0000000012_add_attrs_company.sql
