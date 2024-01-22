@@ -21,9 +21,10 @@ public class Company {
     private String name;
     private String businessActivity;
     private int numberOfEmployees;
-    private String headquarters;
+    private Location headquarters;
     private String phone;
     private String institutionalDescription;
+    private String email;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     @ToString.Exclude
