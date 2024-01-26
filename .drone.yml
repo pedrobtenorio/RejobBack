@@ -10,7 +10,8 @@ steps:
     repo: rejob
     registry: 716814888065.dkr.ecr.us-east-2.amazonaws.com
     region: us-east-2
-    dockerfile: Dockerfile
+    context: rejobBack
+    dockerfile: Dockerfile-spring
     tags:
       - backend-latest
       - ${DRONE_BUILD_NUMBER}
