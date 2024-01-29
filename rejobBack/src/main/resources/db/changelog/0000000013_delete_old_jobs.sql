@@ -1,0 +1,1 @@
+DELETE FROM job where education_level IS NULL;
