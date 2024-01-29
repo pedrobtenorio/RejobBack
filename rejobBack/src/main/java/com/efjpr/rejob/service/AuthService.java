@@ -37,8 +37,8 @@ public class AuthService {
     private final EmployeeService employeeService;
     private final EmailServiceImpl emailService;
 
-    public AuthResponse register(CollaboratorRegisterRequest request, MultipartFile file) {
-        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR, file);
+    public AuthResponse register(CollaboratorRegisterRequest request) {
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR);
         var token = jwtService.generateToken(user);
 
         collaboratorService.create(request, user);
@@ -52,9 +52,9 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse register(EmployeeRegisterRequest request, MultipartFile file) {
+    public AuthResponse register(EmployeeRegisterRequest request) {
 
-        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.USER, file);
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.USER);
         var token = jwtService.generateToken(user);
 
         employeeService.create(request, user);
@@ -83,7 +83,7 @@ public class AuthService {
                 .build();
     }
 
-    private User createUser(String email, String name, String password, String phoneNumber, Role type, MultipartFile  file) {
+    private User createUser(String email, String name, String password, String phoneNumber, Role type) {
         if (userRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");
         }
@@ -98,7 +98,7 @@ public class AuthService {
                 .lastUpdatedDate(Date.from(Instant.now()))
                 .build();
 
-        handleProfilePicture(user, file);
+        //handleProfilePicture(user, file);
 
        return userRepository.save(user);
     }

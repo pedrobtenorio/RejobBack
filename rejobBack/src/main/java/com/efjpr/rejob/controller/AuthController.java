@@ -22,15 +22,13 @@ public class AuthController {
     private final EmailService emailService;
 
     @PostMapping("/register-employee")
-    public ResponseEntity<AuthResponse> register(@RequestPart("data") EmployeeRegisterRequest request,
-                                                 @RequestPart(value = "file", required = false) MultipartFile file) {
-        return new ResponseEntity<>(authService.register(request, file), HttpStatus.OK);
+    public ResponseEntity<AuthResponse> register(@RequestBody EmployeeRegisterRequest request) {
+        return new ResponseEntity<>(authService.register(request), HttpStatus.OK);
     }
 
     @PostMapping("/register-collaborator")
-    public ResponseEntity<AuthResponse> register(@RequestPart("data")  CollaboratorRegisterRequest request,
-                                                 @RequestPart(value = "file", required = false) MultipartFile file) {
-        return new ResponseEntity<>(authService.register(request, file), HttpStatus.OK);
+    public ResponseEntity<AuthResponse> register(@RequestBody CollaboratorRegisterRequest request) {
+        return new ResponseEntity<>(authService.register(request), HttpStatus.OK);
     }
 
 
