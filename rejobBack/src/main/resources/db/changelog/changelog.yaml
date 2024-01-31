@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/0000000012_add_attrs_company.sql
   - include:
       file: db/changelog/0000000013_delete_old_jobs.sql
+  - include:
+      file: db/changelog/0000000014_add_location_employee.sql
