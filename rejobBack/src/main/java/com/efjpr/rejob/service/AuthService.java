@@ -1,9 +1,7 @@
 package com.efjpr.rejob.service;
 
-import com.efjpr.rejob.domain.Dto.AuthRequest;
-import com.efjpr.rejob.domain.Dto.AuthResponse;
-import com.efjpr.rejob.domain.Dto.CollaboratorRegisterRequest;
-import com.efjpr.rejob.domain.Dto.EmployeeRegisterRequest;
+import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.*;
 import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.UserRepository;
@@ -36,6 +34,7 @@ public class AuthService {
     private final CollaboratorService collaboratorService;
     private final EmployeeService employeeService;
     private final EmailServiceImpl emailService;
+    private final CompanyService companyService;
 
     public AuthResponse register(CollaboratorRegisterRequest request) {
         User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR);
@@ -49,6 +48,19 @@ public class AuthService {
 
         return AuthResponse.builder()
                 .token(token)
+                .build();
+    }
+
+    public AuthResponseCompany register(CompanyRegisterRequest request) {
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhone(), Role.COMPANY);
+        var token = jwtService.generateToken(user);
+
+      Company company =  companyService.create(request, user);
+
+
+        return AuthResponseCompany.builder()
+                .token(token)
+                .company(company)
                 .build();
     }
 

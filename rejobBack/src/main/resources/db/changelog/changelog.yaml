@@ -33,3 +33,5 @@ databaseChangeLog:
       file: db/changelog/0000000014_add_location_employee.sql
   - include:
       file: db/changelog/0000000015_add_company_type.sql
+  - include:
+      file: db/changelog/0000000016_company_is_now_user.sql

@@ -20,11 +20,11 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<Company> createCompany(@RequestBody Company company) {
-        Company createdCompany = companyService.createCompany(company);
+        Company createdCompany = companyService.create(company);
         return new ResponseEntity<>(createdCompany, HttpStatus.CREATED);
-    }
+    }*/
 
     @GetMapping("/{companyId}")
     public ResponseEntity<Company> getCompanyById(@PathVariable Long companyId) {

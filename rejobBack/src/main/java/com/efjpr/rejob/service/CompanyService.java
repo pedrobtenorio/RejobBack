@@ -2,6 +2,8 @@ package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.CompanyRegisterRequest;
+import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.CollaboratorRepository;
 import com.efjpr.rejob.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,21 @@ public class CompanyService {
     @Autowired
     private CollaboratorRepository collaboratorRepository;
 
-    public Company createCompany(Company company) {
+    public Company create(CompanyRegisterRequest request, User user) {
+
+        Company company = Company.builder()
+                .companyType(request.getCompanyType())
+                .cnpj(request.getCnpj())
+                .businessActivity(request.getBusinessActivity())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .institutionalDescription(request.getInstitutionalDescription())
+                .numberOfEmployees(request.getNumberOfEmployees())
+                .user(user)
+                .headquarters(request.getHeadquarters())
+                .name(request.getName())
+                .build();
+
         return companyRepository.save(company);
     }
 
