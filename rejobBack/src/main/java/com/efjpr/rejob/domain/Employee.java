@@ -26,7 +26,7 @@ public class Employee {
     private String prisonCode;
     private EducationLevel educationLevel;
     private String dateOfBirth;
-    private String residenceLocation;
+    private Location residenceLocation;
 
     @Enumerated(EnumType.STRING)
     private SentenceRegime sentenceRegime;
