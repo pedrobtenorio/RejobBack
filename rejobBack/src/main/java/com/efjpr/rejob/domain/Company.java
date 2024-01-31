@@ -28,6 +28,9 @@ public class Company {
     @Enumerated(EnumType.STRING)
     private CompanyType companyType;
 
+    @OneToOne
+    private User user;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Collaborator> collaborators;
