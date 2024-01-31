@@ -1,8 +1,8 @@
 package com.efjpr.rejob.domain;
 
+import com.efjpr.rejob.domain.Enums.CompanyType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.util.List;
 
@@ -25,6 +25,8 @@ public class Company {
     private String phone;
     private String institutionalDescription;
     private String email;
+    @Enumerated(EnumType.STRING)
+    private CompanyType companyType;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     @ToString.Exclude

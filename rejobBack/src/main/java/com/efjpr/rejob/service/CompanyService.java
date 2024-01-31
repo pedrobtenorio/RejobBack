@@ -81,5 +81,6 @@ public class CompanyService {
         existingCompany.setPhone(updatedCompany.getPhone());
         existingCompany.setInstitutionalDescription(updatedCompany.getInstitutionalDescription());
         existingCompany.setEmail(updatedCompany.getEmail());
+        existingCompany.setCompanyType(updatedCompany.getCompanyType());
     }
 }
