@@ -29,7 +29,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("me")
+    @GetMapping("/me")
     public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
