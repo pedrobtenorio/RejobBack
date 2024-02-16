@@ -10,10 +10,7 @@ public class CollaboratorRegisterRequest {
     private String email;
     private String password;
     private String phoneNumber;
-
-    private String fullName;
     private String jobTitle;
-    private String departmentOrArea;
     private CollaboratorType collaboratorType;
     private Long companyId;
 }

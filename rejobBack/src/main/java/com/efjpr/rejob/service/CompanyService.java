@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +88,11 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
+    public void removeCollaborator(List<Company> companies) {
+        for (Company company: companies) {
+            company.removeCollaborators();
+        }
+    }
 
     private void updateCompanyFields(Company existingCompany, Company updatedCompany) {
         existingCompany.setCnpj(updatedCompany.getCnpj());

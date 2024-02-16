@@ -35,5 +35,7 @@ public class Company {
     @ToString.Exclude
     private List<Collaborator> collaborators;
 
-
+    public void removeCollaborators() {
+        this.collaborators = null;
+    }
 }
