@@ -1,9 +1,7 @@
 package com.efjpr.rejob.controller;
 
-import com.efjpr.rejob.domain.Dto.AuthRequest;
-import com.efjpr.rejob.domain.Dto.AuthResponse;
-import com.efjpr.rejob.domain.Dto.CollaboratorRegisterRequest;
-import com.efjpr.rejob.domain.Dto.EmployeeRegisterRequest;
+import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.*;
 import com.efjpr.rejob.service.AuthService;
 import com.efjpr.rejob.service.email.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +20,18 @@ public class AuthController {
     private final EmailService emailService;
 
     @PostMapping("/register-employee")
-    public ResponseEntity<AuthResponse> register(@RequestPart("data") EmployeeRegisterRequest request,
-                                                 @RequestPart(value = "file", required = false) MultipartFile file) {
-        return new ResponseEntity<>(authService.register(request, file), HttpStatus.OK);
+    public ResponseEntity<AuthResponse> register(@RequestBody EmployeeRegisterRequest request) {
+        return new ResponseEntity<>(authService.register(request), HttpStatus.OK);
     }
 
     @PostMapping("/register-collaborator")
-    public ResponseEntity<AuthResponse> register(@RequestPart("data")  CollaboratorRegisterRequest request,
-                                                 @RequestPart(value = "file", required = false) MultipartFile file) {
-        return new ResponseEntity<>(authService.register(request, file), HttpStatus.OK);
+    public ResponseEntity<AuthResponse> register(@RequestBody CollaboratorRegisterRequest request) {
+        return new ResponseEntity<>(authService.register(request), HttpStatus.OK);
+    }
+
+    @PostMapping("/register-Company")
+    public ResponseEntity<AuthResponseCompany> register(@RequestBody CompanyRegisterRequest request) {
+        return new ResponseEntity<>(authService.register(request), HttpStatus.OK);
     }
 
 

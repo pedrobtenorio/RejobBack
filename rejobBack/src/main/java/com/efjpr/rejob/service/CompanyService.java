@@ -2,6 +2,8 @@ package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.CompanyRegisterRequest;
+import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.CollaboratorRepository;
 import com.efjpr.rejob.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,21 @@ public class CompanyService {
     @Autowired
     private CollaboratorRepository collaboratorRepository;
 
-    public Company createCompany(Company company) {
+    public Company create(CompanyRegisterRequest request, User user) {
+
+        Company company = Company.builder()
+                .companyType(request.getCompanyType())
+                .cnpj(request.getCnpj())
+                .businessActivity(request.getBusinessActivity())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .institutionalDescription(request.getInstitutionalDescription())
+                .numberOfEmployees(request.getNumberOfEmployees())
+                .user(user)
+                .headquarters(request.getHeadquarters())
+                .name(request.getName())
+                .build();
+
         return companyRepository.save(company);
     }
 
@@ -71,6 +88,11 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
+    public void removeCollaborator(List<Company> companies) {
+        for (Company company: companies) {
+            company.removeCollaborators();
+        }
+    }
 
     private void updateCompanyFields(Company existingCompany, Company updatedCompany) {
         existingCompany.setCnpj(updatedCompany.getCnpj());
@@ -81,5 +103,6 @@ public class CompanyService {
         existingCompany.setPhone(updatedCompany.getPhone());
         existingCompany.setInstitutionalDescription(updatedCompany.getInstitutionalDescription());
         existingCompany.setEmail(updatedCompany.getEmail());
+        existingCompany.setCompanyType(updatedCompany.getCompanyType());
     }
 }

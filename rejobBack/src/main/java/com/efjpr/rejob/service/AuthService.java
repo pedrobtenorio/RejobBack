@@ -1,9 +1,7 @@
 package com.efjpr.rejob.service;
 
-import com.efjpr.rejob.domain.Dto.AuthRequest;
-import com.efjpr.rejob.domain.Dto.AuthResponse;
-import com.efjpr.rejob.domain.Dto.CollaboratorRegisterRequest;
-import com.efjpr.rejob.domain.Dto.EmployeeRegisterRequest;
+import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.*;
 import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.UserRepository;
@@ -36,9 +34,10 @@ public class AuthService {
     private final CollaboratorService collaboratorService;
     private final EmployeeService employeeService;
     private final EmailServiceImpl emailService;
+    private final CompanyService companyService;
 
-    public AuthResponse register(CollaboratorRegisterRequest request, MultipartFile file) {
-        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR, file);
+    public AuthResponse register(CollaboratorRegisterRequest request) {
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR);
         var token = jwtService.generateToken(user);
 
         collaboratorService.create(request, user);
@@ -52,9 +51,22 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse register(EmployeeRegisterRequest request, MultipartFile file) {
+    public AuthResponseCompany register(CompanyRegisterRequest request) {
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhone(), Role.COMPANY);
+        var token = jwtService.generateToken(user);
 
-        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.USER, file);
+      Company company =  companyService.create(request, user);
+
+
+        return AuthResponseCompany.builder()
+                .token(token)
+                .company(company)
+                .build();
+    }
+
+    public AuthResponse register(EmployeeRegisterRequest request) {
+
+        User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.USER);
         var token = jwtService.generateToken(user);
 
         employeeService.create(request, user);
@@ -83,7 +95,7 @@ public class AuthService {
                 .build();
     }
 
-    private User createUser(String email, String name, String password, String phoneNumber, Role type, MultipartFile  file) {
+    private User createUser(String email, String name, String password, String phoneNumber, Role type) {
         if (userRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");
         }
@@ -98,7 +110,7 @@ public class AuthService {
                 .lastUpdatedDate(Date.from(Instant.now()))
                 .build();
 
-        handleProfilePicture(user, file);
+        //handleProfilePicture(user, file);
 
        return userRepository.save(user);
     }
