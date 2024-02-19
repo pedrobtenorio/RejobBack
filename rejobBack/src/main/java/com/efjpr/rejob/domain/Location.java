@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Location {
 
     String city;
-    String State;
+    String state;
     String address;
 
 }

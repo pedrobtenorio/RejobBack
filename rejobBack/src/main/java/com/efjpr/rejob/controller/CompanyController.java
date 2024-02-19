@@ -59,6 +59,7 @@ public class CompanyController {
     @GetMapping
     public ResponseEntity<List<Company>> getAllCompanies() {
         List<Company> companies = companyService.getAllCompanies();
+        companyService.removeCollaborator(companies);
         return new ResponseEntity<>(companies, HttpStatus.OK);
     }
 }

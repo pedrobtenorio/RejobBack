@@ -23,7 +23,6 @@ public class Collaborator  {
     private User user;
 
     private String jobTitle;
-    private String departmentOrArea;
 
     @Enumerated(EnumType.STRING)
     private CollaboratorType collaboratorType;

@@ -26,7 +26,6 @@ public class CollaboratorService {
         Collaborator collaborator = Collaborator.builder()
                 .user(user)
                 .jobTitle(request.getJobTitle())
-                .departmentOrArea(request.getDepartmentOrArea())
                 .collaboratorType(request.getCollaboratorType())
                 .company(company)
                 .build();
