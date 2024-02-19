@@ -1,0 +1,13 @@
+version: '3'
+services:
+  postgres-db:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rejob
+  spring-app:
+    build:
+      context: ./rejobBack
+      dockerfile: Dockerfile-spring
+    ports:
+      - "8080:8080"
