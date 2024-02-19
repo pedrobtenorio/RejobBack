@@ -1,6 +1,7 @@
 package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Collaborator;
+import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Employee;
 import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.service.UserService;
@@ -43,6 +44,11 @@ public class UserController {
     @GetMapping("/{userId}/employee")
     public ResponseEntity<Employee> getEmployeeByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.getEmployee(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/company")
+    public ResponseEntity<Company> getCompanyByUserId(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.getCompany(userId), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/collaborator")
