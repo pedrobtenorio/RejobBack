@@ -38,16 +38,15 @@ public class UserControllerTest {
 
     MockMvc mockMvc;
 
-    private User user;
     private Employee employee;
-    private Company company;
-    private Collaborator collaborator;
-    private Long id;
+    private User user;
+    private Long userId = 1L;
+
 
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                    .alwaysDo(print())
+                .alwaysDo(print())
                 .build();
 
         User user = User.builder()
@@ -62,7 +61,8 @@ public class UserControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-        Employee employee = Employee.builder()
+        employee = Employee.builder()
+                .id(1L)
                 .user(user)
                 .cpf("12345678900")
                 .prisonCode("ABC123")
@@ -75,27 +75,17 @@ public class UserControllerTest {
                 .skillsAndQualifications("Java, Spring Boot, SQL")
                 .educationalHistory("Bachelor's Degree in Computer Science")
                 .build();
-
-
-        company = new Company();
-        collaborator = new Collaborator();
-
-
-
     }
 
     @Test
     public void shouldGetEmployeeByIdWithSuccess() throws Exception {
-        when(userService.getEmployee(id)).thenReturn(employee);
 
-        mockMvc.perform(get("/api/v1/users/employee")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .param("Id", employee.getId().toString()))
+        mockMvc.perform(get("/api/v1/users/{id}/employee", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        verify(userService).getEmployee(id);
+        verify(userService).getEmployee(userId);
         verifyNoMoreInteractions(userService);
-
     }
 }
