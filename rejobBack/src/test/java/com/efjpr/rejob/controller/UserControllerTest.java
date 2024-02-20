@@ -38,8 +38,7 @@ public class UserControllerTest {
 
     MockMvc mockMvc;
 
-    private Employee employee;
-    private User user;
+
     private Long userId = 1L;
 
 
@@ -61,7 +60,7 @@ public class UserControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-        employee = Employee.builder()
+       Employee employee = Employee.builder()
                 .id(1L)
                 .user(user)
                 .cpf("12345678900")
