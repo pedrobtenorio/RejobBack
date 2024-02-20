@@ -1,7 +1,9 @@
 package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Collaborator;
+import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Employee;
+import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,17 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public User getUser() {
+    public ResponseEntity<?>  getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof User user) {
+            Role role = user.getRole();
+            return switch (role) {
+                case USER -> new ResponseEntity<>(userService.getEmployee(user.getId()), HttpStatus.OK);
+                case COMPANY -> new ResponseEntity<>(userService.getCompany(user.getId()), HttpStatus.OK);
+                case COLLABORATOR -> new ResponseEntity<>(userService.getCollaborator(user.getId()), HttpStatus.OK);
+                case ADMIN -> new ResponseEntity<>(user, HttpStatus.OK);
+            };
         } else {
             throw new IllegalStateException("Authenticated principal is not a User");
         }
@@ -43,6 +51,11 @@ public class UserController {
     @GetMapping("/{userId}/employee")
     public ResponseEntity<Employee> getEmployeeByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.getEmployee(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/company")
+    public ResponseEntity<Company> getCompanyByUserId(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.getCompany(userId), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/collaborator")

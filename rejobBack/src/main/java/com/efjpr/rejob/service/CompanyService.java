@@ -8,15 +8,16 @@ import com.efjpr.rejob.repository.CollaboratorRepository;
 import com.efjpr.rejob.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,11 @@ public class CompanyService {
     public Company getCompanyById(Long companyId) {
         return companyRepository.findById(companyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company with ID " + companyId + " not found"));
+    }
+
+    public Company findByUser(User user) {
+        return companyRepository.findByUser(user)
+                .orElseThrow(() -> new UsernameNotFoundException("Collaborator not found"));
     }
 
     public void setUserToCompany(Collaborator collaborator, Company company) {
