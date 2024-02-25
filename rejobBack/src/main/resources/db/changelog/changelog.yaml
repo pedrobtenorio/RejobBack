@@ -35,3 +35,7 @@ databaseChangeLog:
       file: db/changelog/0000000015_add_company_type.sql
   - include:
       file: db/changelog/0000000016_company_is_now_user.sql
+  - include:
+      file: db/changelog/0000000017_alter_job_description_type.sql
+  - include:
+      file: db/changelog/0000000018_create_job_applications_table.sql
