@@ -31,5 +31,11 @@ public class Collaborator  {
     @JsonIgnore
     private Company company;
 
+    public Long getCompanyId() {
+        if (company != null) {
+            return company.getId();
+        }
+        return null; // or throw an exception, depending on your requirements
+    }
 
 }

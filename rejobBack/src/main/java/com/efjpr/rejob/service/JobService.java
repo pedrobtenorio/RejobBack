@@ -30,6 +30,14 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobResponse> getAllJobsByCollaboratorId(Long collaboratorId) {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream()
+                .filter(job -> job.getContactPerson().getId().equals(collaboratorId))
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
     public Job createJob(JobCreate jobPayload) {
         Collaborator contactPerson = collaboratorRepository.findById(jobPayload.getContactPersonId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + jobPayload.getContactPersonId() + " not found"));

@@ -2,6 +2,7 @@ package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.CollaboratorGetRequest;
 import com.efjpr.rejob.domain.Employee;
 import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.User;
@@ -59,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/collaborator")
-    public ResponseEntity<Collaborator> getCollaboratorByUserId(@PathVariable Long userId) {
+    public ResponseEntity<CollaboratorGetRequest> getCollaboratorByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.getCollaborator(userId),HttpStatus.OK);
     }
 
