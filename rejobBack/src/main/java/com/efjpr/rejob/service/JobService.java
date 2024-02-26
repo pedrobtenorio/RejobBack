@@ -30,6 +30,14 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobResponse> getAllJobsByCollaboratorId(Long collaboratorId) {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream()
+                .filter(job -> job.getContactPerson().getId().equals(collaboratorId))
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
     public Job createJob(JobCreate jobPayload) {
         Collaborator contactPerson = collaboratorRepository.findById(jobPayload.getContactPersonId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + jobPayload.getContactPersonId() + " not found"));
@@ -47,15 +55,23 @@ public class JobService {
         return convertToJobResponse(job);
     }
 
+    public Job findById(Long id) {
+        return jobRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found"));
+    }
+
     public List<Job> getJobByCompanyId(long companyId) {
         return jobRepository.findByCompanyId(companyId);
     }
 
-    public Job updateJob(Long id, Job updatedJob) {
+    public Job updateJob(Long id, JobCreate updatedJob) {
         Job existingJob = jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found") {
                 });
-        validateAndApplyUpdates(existingJob, updatedJob);
+        Collaborator contactPerson = collaboratorRepository.findById(updatedJob.getContactPersonId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + updatedJob.getContactPersonId() + " not found"));
+
+        validateAndApplyUpdates(existingJob, updatedJob, contactPerson);
         return jobRepository.save(existingJob);
     }
 
@@ -65,11 +81,11 @@ public class JobService {
         jobRepository.delete(existingJob);
     }
 
-    private void validateAndApplyUpdates(Job existingJob, Job updatedJob) {
+    private void validateAndApplyUpdates(Job existingJob, JobCreate updatedJob, Collaborator collaborator) {
         existingJob.setCompanyLocation(updatedJob.getCompanyLocation());
         existingJob.setJobType(updatedJob.getJobType());
         existingJob.setCategories(updatedJob.getCategories());
-        existingJob.setContactPerson(updatedJob.getContactPerson());
+        existingJob.setContactPerson(collaborator);
         existingJob.setJobTitle(updatedJob.getJobTitle());
         existingJob.setRequirements(updatedJob.getRequirements());
         existingJob.setJobDescription(updatedJob.getJobDescription());
