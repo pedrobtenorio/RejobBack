@@ -48,6 +48,7 @@ public class UserService {
                 .collaboratorType(collaborator.getCollaboratorType())
                 .jobTitle(collaborator.getJobTitle())
                 .companyId(collaborator.getCompanyId())
+                .collaboratorId(collaborator.getId())
                 .build();
     }
 
