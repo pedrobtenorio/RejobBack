@@ -16,11 +16,9 @@ public class JobCreate {
     private Long id;
 
     private Location companyLocation;
-    private String jobType;
     private String categories;
     private Long contactPersonId;
     private String jobTitle;
-    private String requirements;
     private String jobDescription;
     private String benefits;
     private String employmentType;

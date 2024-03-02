@@ -83,11 +83,9 @@ public class JobService {
 
     private void validateAndApplyUpdates(Job existingJob, JobCreate updatedJob, Collaborator collaborator) {
         existingJob.setCompanyLocation(updatedJob.getCompanyLocation());
-        existingJob.setJobType(updatedJob.getJobType());
         existingJob.setCategories(updatedJob.getCategories());
         existingJob.setContactPerson(collaborator);
         existingJob.setJobTitle(updatedJob.getJobTitle());
-        existingJob.setRequirements(updatedJob.getRequirements());
         existingJob.setJobDescription(updatedJob.getJobDescription());
         existingJob.setBenefits(updatedJob.getBenefits());
         existingJob.setEmploymentType(updatedJob.getEmploymentType());
@@ -99,11 +97,9 @@ public class JobService {
     private Job buildJobFromPayload(JobCreate jobPayload, Collaborator contactPerson) {
         return Job.builder()
                 .companyLocation(jobPayload.getCompanyLocation())
-                .jobType(jobPayload.getJobType())
                 .categories(jobPayload.getCategories())
                 .contactPerson(contactPerson)
                 .jobTitle(jobPayload.getJobTitle())
-                .requirements(jobPayload.getRequirements())
                 .jobDescription(jobPayload.getJobDescription())
                 .benefits(jobPayload.getBenefits())
                 .employmentType(jobPayload.getEmploymentType())
@@ -123,11 +119,9 @@ public class JobService {
         JobResponse jobResponse = new JobResponse();
         jobResponse.setId(job.getId());
         jobResponse.setCompanyLocation(job.getCompanyLocation());
-        jobResponse.setJobType(job.getJobType());
         jobResponse.setCategories(job.getCategories());
         jobResponse.setContactPerson(job.getContactPerson());
         jobResponse.setJobTitle(job.getJobTitle());
-        jobResponse.setRequirements(job.getRequirements());
         jobResponse.setJobDescription(job.getJobDescription());
         jobResponse.setBenefits(job.getBenefits());
         jobResponse.setEmploymentType(job.getEmploymentType());
