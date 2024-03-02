@@ -2,7 +2,7 @@ package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Dto.JobApplicationRequest;
 import com.efjpr.rejob.domain.Dto.updateJobApplication;
-import com.efjpr.rejob.domain.Enums.ApplicationStatus;
+import com.efjpr.rejob.domain.Employee;
 import com.efjpr.rejob.domain.JobApplication;
 import com.efjpr.rejob.service.JobApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +33,20 @@ public class JobApplicationController {
     @GetMapping("/{id}")
     public ResponseEntity<JobApplication> getJobApplicationById(@PathVariable Long id) {
         Optional<JobApplication> jobApplicationOptional = jobApplicationService.findJobApplicationById(id);
-        return jobApplicationOptional.map(jobApplication -> new ResponseEntity<>(jobApplication, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return jobApplicationOptional.map(jobApplication -> new ResponseEntity<>(jobApplication, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("my-applications/{employeeId}")
+    public ResponseEntity<List<JobApplication>> getApplications(@PathVariable Long employeeId) {
+        return new ResponseEntity<>(jobApplicationService.findByEmployeeId(employeeId), HttpStatus.OK);
+    }
+
+    @GetMapping("applicants/{JobId}")
+    public ResponseEntity<List<Employee>> findApplicantsByJobId(@PathVariable Long JobId) {
+        return new ResponseEntity<>(jobApplicationService.findApplicantsByJobId(JobId), HttpStatus.OK);
+    }
+
+
 
     @GetMapping
     public ResponseEntity<List<JobApplication>> getAllJobApplications() {
@@ -49,9 +60,9 @@ public class JobApplicationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}") public ResponseEntity<JobApplication> updateJobApplication(@PathVariable Long id,
-                                                                                    @RequestBody updateJobApplication request) {
-       JobApplication jobApplication =  jobApplicationService.updateJobApplication(id, request.getStatus(), request.getFeedback());
+    @PutMapping("/{id}")
+    public ResponseEntity<JobApplication> updateJobApplication(@PathVariable Long id, @RequestBody updateJobApplication request) {
+        JobApplication jobApplication = jobApplicationService.updateJobApplication(id, request.getStatus(), request.getFeedback());
         return new ResponseEntity<>(jobApplication, HttpStatus.OK);
     }
 }
