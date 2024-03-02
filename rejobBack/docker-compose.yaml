@@ -11,3 +11,15 @@ services:
       - "54321:5433"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile-spring
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+volumes:
+  pgdata:

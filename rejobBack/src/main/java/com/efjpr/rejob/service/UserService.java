@@ -1,6 +1,9 @@
 package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.Collaborator;
+import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Dto.CollaboratorGetRequest;
+import com.efjpr.rejob.domain.Dto.CollaboratorRegisterRequest;
 import com.efjpr.rejob.domain.Employee;
 import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.UserRepository;
@@ -21,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CollaboratorService collaboratorService;
     private final EmployeeService employeeService;
+    private final CompanyService companyService;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -35,15 +39,28 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " not found"));
     }
 
-    public Collaborator getCollaborator(Long id) {
+    public CollaboratorGetRequest getCollaborator(Long id) {
         User user = getUserById(id);
-        return this.collaboratorService.findByUser(user);
+        Collaborator collaborator = this.collaboratorService.findByUser(user);
+
+        return CollaboratorGetRequest.builder()
+                .user(collaborator.getUser())
+                .collaboratorType(collaborator.getCollaboratorType())
+                .jobTitle(collaborator.getJobTitle())
+                .companyId(collaborator.getCompanyId())
+                .build();
     }
 
     public Employee getEmployee(Long id) {
         User user = getUserById(id);
         return this.employeeService.findByUser(user);
     }
+
+    public Company getCompany(Long id) {
+        User user = getUserById(id);
+        return this.companyService.findByUser(user);
+    }
+
 
     public User updateUser(Long id, User updatedUser) {
         User existingUser = userRepository.findById(id)

@@ -21,3 +21,21 @@ databaseChangeLog:
       file: db/changelog/0000000008_fix_sequences.sql
   - include:
       file: db/changelog/0000000009_alter_job.sql
+  - include:
+      file: db/changelog/0000000010_add_attrs_job.sql
+  - include:
+      file: db/changelog/0000000011_add_attrs_job_2.sql
+  - include:
+      file: db/changelog/0000000012_add_attrs_company.sql
+  - include:
+      file: db/changelog/0000000013_delete_old_jobs.sql
+  - include:
+      file: db/changelog/0000000014_add_location_employee.sql
+  - include:
+      file: db/changelog/0000000015_add_company_type.sql
+  - include:
+      file: db/changelog/0000000016_company_is_now_user.sql
+  - include:
+      file: db/changelog/0000000017_alter_job_description_type.sql
+  - include:
+      file: db/changelog/0000000018_create_job_applications_table.sql
