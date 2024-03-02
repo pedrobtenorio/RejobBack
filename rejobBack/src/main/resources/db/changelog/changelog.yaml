@@ -39,3 +39,5 @@ databaseChangeLog:
       file: db/changelog/0000000017_alter_job_description_type.sql
   - include:
       file: db/changelog/0000000018_create_job_applications_table.sql
+  - include:
+      file: db/changelog/0000000019_remove_job_type_and_requirements.sql
