@@ -33,6 +33,11 @@ public class JobController {
         return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
     }
 
+    @GetMapping("recommendation/{employeeId}")
+    public ResponseEntity<List<JobResponse>> recommendedJobsForUser(@PathVariable  Long employeeId) {
+        return new ResponseEntity<>(jobService.getRecommendedJobs(employeeId), HttpStatus.OK);
+    }
+
     @GetMapping("job-by-collaborator/{collaboratorId}")
     public ResponseEntity<List<JobResponse>> getAllJobsbyCollaboratorId(@PathVariable Long collaboratorId) {
         return new ResponseEntity<>(jobService.getAllJobsByCollaboratorId(collaboratorId), HttpStatus.OK);
