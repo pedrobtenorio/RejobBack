@@ -24,14 +24,12 @@ public class Job {
     private Long id;
 
     private Location companyLocation;
-    private String jobType;
     private String categories;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Collaborator contactPerson;
 
     private String jobTitle;
-    private String requirements;
     private String jobDescription;
     private String benefits;
     private String employmentType;
