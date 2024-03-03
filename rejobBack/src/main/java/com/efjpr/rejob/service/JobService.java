@@ -22,6 +22,8 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final CollaboratorRepository collaboratorRepository;
+    private final EmployeeService employeeService;
+    private final JobRecommendationService jobRecommendationService;
 
     public List<JobResponse> getAllJobs() {
         List<Job> jobs = jobRepository.findAll();
@@ -138,4 +140,10 @@ public class JobService {
     }
 
 
+    public List<JobResponse> getRecommendedJobs(Long employeeId) {
+        List<Job> jobs = jobRecommendationService.getBestJobs(employeeService.findById(employeeId));
+        return jobs.stream()
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
 }
