@@ -33,6 +33,16 @@ public class JobController {
         return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
     }
 
+    @GetMapping("recommendation/{employeeId}")
+    public ResponseEntity<List<JobResponse>> recommendedJobsForUser(@PathVariable  Long employeeId) {
+        return new ResponseEntity<>(jobService.getRecommendedJobs(employeeId), HttpStatus.OK);
+    }
+
+    @GetMapping("job-by-collaborator/{collaboratorId}")
+    public ResponseEntity<List<JobResponse>> getAllJobsbyCollaboratorId(@PathVariable Long collaboratorId) {
+        return new ResponseEntity<>(jobService.getAllJobsByCollaboratorId(collaboratorId), HttpStatus.OK);
+    }
+
     @GetMapping("job-list/{companyId}")
     public ResponseEntity<List<Job>> getJobByCompanyId(@PathVariable Long companyId) {
         return new ResponseEntity<>(jobService.getJobByCompanyId(companyId), HttpStatus.OK);
@@ -44,7 +54,7 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
+    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody JobCreate updatedJob) {
         return new ResponseEntity<>(jobService.updateJob(id, updatedJob), HttpStatus.OK);
     }
 

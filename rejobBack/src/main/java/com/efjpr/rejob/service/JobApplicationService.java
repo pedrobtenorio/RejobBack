@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class JobApplicationService {
@@ -32,16 +34,10 @@ public class JobApplicationService {
 
 
     public JobApplication saveJobApplication(JobApplicationRequest jobApplicationRequest) {
-        Employee applicant =  employeeService.findById(jobApplicationRequest.getApplicantId());
-        Job job =  jobService.findById(jobApplicationRequest.getJobId());
+        Employee applicant = employeeService.findById(jobApplicationRequest.getApplicantId());
+        Job job = jobService.findById(jobApplicationRequest.getJobId());
 
-        JobApplication jobApplication = JobApplication.builder()
-                .applicant(applicant)
-                .job(job)
-                .applicationDate(Date.from(Instant.now()))
-                .status(jobApplicationRequest.getStatus())
-                .feedback(jobApplicationRequest.getFeedback())
-                .build();
+        JobApplication jobApplication = JobApplication.builder().applicant(applicant).job(job).applicationDate(Date.from(Instant.now())).status(jobApplicationRequest.getStatus()).feedback(jobApplicationRequest.getFeedback()).build();
 
         return jobApplicationRepository.save(jobApplication);
     }
@@ -66,6 +62,20 @@ public class JobApplicationService {
         JobApplication jobApplication = findJobApplicationById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with id " + id + " not found"));
         jobApplication.setStatus(status);
         jobApplication.setFeedback(feedback);
-        return  jobApplicationRepository.save(jobApplication);
+        return jobApplicationRepository.save(jobApplication);
+    }
+
+    public List<JobApplication> findByEmployeeId(Long employeeId) {
+        Employee applicant = employeeService.findById(employeeId);
+        return jobApplicationRepository.findAllByApplicant(applicant);
+    }
+
+    public List<Employee> findApplicantsByJobId(Long jobId) {
+        if (jobId == null) {
+            return Collections.emptyList();
+        }
+        return jobApplicationRepository.findAllByJobId(jobId).stream()
+                .map(JobApplication::getApplicant)
+                .collect(Collectors.toList());
     }
 }

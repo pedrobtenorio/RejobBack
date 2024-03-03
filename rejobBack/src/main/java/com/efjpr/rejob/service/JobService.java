@@ -22,10 +22,20 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final CollaboratorRepository collaboratorRepository;
+    private final EmployeeService employeeService;
+    private final JobRecommendationService jobRecommendationService;
 
     public List<JobResponse> getAllJobs() {
         List<Job> jobs = jobRepository.findAll();
         return jobs.stream()
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<JobResponse> getAllJobsByCollaboratorId(Long collaboratorId) {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream()
+                .filter(job -> job.getContactPerson().getId().equals(collaboratorId))
                 .map(this::convertToJobResponse)
                 .collect(Collectors.toList());
     }
@@ -56,11 +66,14 @@ public class JobService {
         return jobRepository.findByCompanyId(companyId);
     }
 
-    public Job updateJob(Long id, Job updatedJob) {
+    public Job updateJob(Long id, JobCreate updatedJob) {
         Job existingJob = jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found") {
                 });
-        validateAndApplyUpdates(existingJob, updatedJob);
+        Collaborator contactPerson = collaboratorRepository.findById(updatedJob.getContactPersonId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + updatedJob.getContactPersonId() + " not found"));
+
+        validateAndApplyUpdates(existingJob, updatedJob, contactPerson);
         return jobRepository.save(existingJob);
     }
 
@@ -70,13 +83,11 @@ public class JobService {
         jobRepository.delete(existingJob);
     }
 
-    private void validateAndApplyUpdates(Job existingJob, Job updatedJob) {
+    private void validateAndApplyUpdates(Job existingJob, JobCreate updatedJob, Collaborator collaborator) {
         existingJob.setCompanyLocation(updatedJob.getCompanyLocation());
-        existingJob.setJobType(updatedJob.getJobType());
         existingJob.setCategories(updatedJob.getCategories());
-        existingJob.setContactPerson(updatedJob.getContactPerson());
+        existingJob.setContactPerson(collaborator);
         existingJob.setJobTitle(updatedJob.getJobTitle());
-        existingJob.setRequirements(updatedJob.getRequirements());
         existingJob.setJobDescription(updatedJob.getJobDescription());
         existingJob.setBenefits(updatedJob.getBenefits());
         existingJob.setEmploymentType(updatedJob.getEmploymentType());
@@ -88,11 +99,9 @@ public class JobService {
     private Job buildJobFromPayload(JobCreate jobPayload, Collaborator contactPerson) {
         return Job.builder()
                 .companyLocation(jobPayload.getCompanyLocation())
-                .jobType(jobPayload.getJobType())
                 .categories(jobPayload.getCategories())
                 .contactPerson(contactPerson)
                 .jobTitle(jobPayload.getJobTitle())
-                .requirements(jobPayload.getRequirements())
                 .jobDescription(jobPayload.getJobDescription())
                 .benefits(jobPayload.getBenefits())
                 .employmentType(jobPayload.getEmploymentType())
@@ -112,11 +121,9 @@ public class JobService {
         JobResponse jobResponse = new JobResponse();
         jobResponse.setId(job.getId());
         jobResponse.setCompanyLocation(job.getCompanyLocation());
-        jobResponse.setJobType(job.getJobType());
         jobResponse.setCategories(job.getCategories());
         jobResponse.setContactPerson(job.getContactPerson());
         jobResponse.setJobTitle(job.getJobTitle());
-        jobResponse.setRequirements(job.getRequirements());
         jobResponse.setJobDescription(job.getJobDescription());
         jobResponse.setBenefits(job.getBenefits());
         jobResponse.setEmploymentType(job.getEmploymentType());
@@ -133,4 +140,10 @@ public class JobService {
     }
 
 
+    public List<JobResponse> getRecommendedJobs(Long employeeId) {
+        List<Job> jobs = jobRecommendationService.getBestJobs(employeeService.findById(employeeId));
+        return jobs.stream()
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
 }
