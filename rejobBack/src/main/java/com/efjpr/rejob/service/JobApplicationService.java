@@ -36,12 +36,17 @@ public class JobApplicationService {
     public JobApplication saveJobApplication(JobApplicationRequest jobApplicationRequest) {
         Employee applicant = employeeService.findById(jobApplicationRequest.getApplicantId());
         Job job = jobService.findById(jobApplicationRequest.getJobId());
-
+        if (applicationExists(applicant, job)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Already applied");
+        }
         JobApplication jobApplication = JobApplication.builder().applicant(applicant).job(job).applicationDate(Date.from(Instant.now())).status(jobApplicationRequest.getStatus()).feedback(jobApplicationRequest.getFeedback()).build();
 
         return jobApplicationRepository.save(jobApplication);
     }
 
+    public boolean applicationExists(Employee applicant, Job job) {
+        return jobApplicationRepository.existsByApplicantAndJob(applicant, job);
+    }
 
     public Optional<JobApplication> findJobApplicationById(Long id) {
         return jobApplicationRepository.findById(id);
@@ -74,8 +79,6 @@ public class JobApplicationService {
         if (jobId == null) {
             return Collections.emptyList();
         }
-        return jobApplicationRepository.findAllByJobId(jobId).stream()
-                .map(JobApplication::getApplicant)
-                .collect(Collectors.toList());
+        return jobApplicationRepository.findAllByJobId(jobId).stream().map(JobApplication::getApplicant).collect(Collectors.toList());
     }
 }
