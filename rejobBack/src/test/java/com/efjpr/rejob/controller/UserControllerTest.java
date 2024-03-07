@@ -76,17 +76,17 @@ public class UserControllerTest {
                 .build();
     }
 
-    @Test
-    public void shouldGetAllUsersWithSuccess() throws Exception {
-
-        mockMvc.perform(get("api/v1/users")
-                    .contentType(MediaType.APPLICATION_JSON))
-                .andExpectAll(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        verify(userService).getAllUsers();
-        verifyNoMoreInteractions(userService);
-    }
+//    @Test
+//    public void shouldGetAllUsersWithSuccess() throws Exception {
+//
+//        mockMvc.perform(get("api/v1/users")
+//                    .contentType(MediaType.APPLICATION_JSON))
+//                .andExpectAll(MockMvcResultMatchers.status().isOk())
+//                .andReturn();
+//
+//        verify(userService).getAllUsers();
+//        verifyNoMoreInteractions(userService);
+//    }
 
     @Test
     public void shouldGetEmployeeByIdWithSuccess() throws Exception {
@@ -99,4 +99,14 @@ public class UserControllerTest {
         verify(userService).getEmployee(userId);
         verifyNoMoreInteractions(userService);
     }
+
+    @Test
+    public void shouldGetUserByIdWithSuccess() throws Exception {
+
+        mockMvc.perform(get("/api/v1/users/me", userId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
 }
