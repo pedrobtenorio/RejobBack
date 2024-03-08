@@ -43,11 +43,8 @@ databaseChangeLog:
       file: db/changelog/0000000019_remove_job_type_and_requirements.sql
   - include:
       file: db/changelog/0000000019_alter_professional_experience.sql
-<<<<<<< Updated upstream
-
-=======
   - include:
       file: db/changelog/0000000021_create_job_applications_constrain.sql
   - include:
       file: db/changelog/0000000022_adjust_enum.sql
->>>>>>> Stashed changes
+
