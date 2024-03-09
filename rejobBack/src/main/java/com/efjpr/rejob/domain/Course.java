@@ -17,6 +17,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Collaborator contactPerson;
+
     private String courseTitle;
     private String platform;
     private String link;
