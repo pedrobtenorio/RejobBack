@@ -31,6 +31,11 @@ public class CourseController {
         return new ResponseEntity<>(courseService.getAllCoursesByCollaboratorId(collaboratorId), HttpStatus.OK);
     }
 
+    @GetMapping()
+    public ResponseEntity<List<CourseResponse>> getAllCourses() {
+        return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponse> getCourseById(@PathVariable Long id) {
         return new ResponseEntity<>(courseService.getCourseById(id), HttpStatus.OK);
