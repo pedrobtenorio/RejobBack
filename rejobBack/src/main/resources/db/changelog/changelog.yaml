@@ -46,4 +46,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/0000000021_create_job_applications_constrain.sql
   - include:
-      file: db/changelog/0000000022_create_course_table.sql
+      file: db/changelog/0000000022_adjust_enum.sql
+  - include:
+      file: db/changelog/0000000023_create_course_table.sql
