@@ -51,3 +51,4 @@ databaseChangeLog:
       file: db/changelog/0000000023_create_course_table.sql
   - include:
       file: db/changelog/0000000024_fix_course_table.sql
+
