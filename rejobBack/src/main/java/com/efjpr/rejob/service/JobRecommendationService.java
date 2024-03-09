@@ -2,11 +2,12 @@ package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.Employee;
 import com.efjpr.rejob.domain.Job;
-import com.efjpr.rejob.utils.StopWords;
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
+import com.efjpr.rejob.domain.JobApplication;
+import com.efjpr.rejob.repository.JobApplicationRepository;
 import com.efjpr.rejob.repository.JobRepository;
+import com.efjpr.rejob.utils.StopWords;
 import lombok.RequiredArgsConstructor;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,18 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
+
 @RequiredArgsConstructor
 @Service
 public class JobRecommendationService {
 
     private final JobRepository jobRepository;
-
+    private final JobApplicationRepository jobApplicationRepository;
     public List<Job> getBestJobs(Employee employee) {
-        List<Job> allJobs = jobRepository.findAll();
+        List<Job> appliedJobs = jobApplicationRepository.findAllByApplicant(employee).stream().map(JobApplication::getJob).toList();
+
+        List<Job> allJobs = jobRepository.findOpenJobs();
+        allJobs.removeIf(appliedJobs::contains);
 
         Map<Job, Double> jobSimilarities = new HashMap<>();
         for (Job job : allJobs) {
@@ -30,12 +35,10 @@ public class JobRecommendationService {
         }
 
         List<Job> recommendedJobs = new ArrayList<>(allJobs);
-        recommendedJobs.sort((job1, job2) ->
-                Double.compare(jobSimilarities.get(job2), jobSimilarities.get(job1)));
+        recommendedJobs.sort((job1, job2) -> Double.compare(jobSimilarities.get(job2), jobSimilarities.get(job1)));
 
-        return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 5));
+        return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 4));
     }
-
 
     public static double calculateJaccardSimilarity(String str1, String str2) {
         Set<String> set1 = tokenizeAndStem(removeStopwords(str1));
@@ -80,7 +83,6 @@ public class JobRecommendationService {
 
         return text.trim();
     }
-
 
 
 
