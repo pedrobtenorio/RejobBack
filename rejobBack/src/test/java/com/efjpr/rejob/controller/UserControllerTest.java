@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Calendar;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class UserControllerTest {
 
     @InjectMocks
-    UserController controller;
+    UserController userController;
 
     @Mock
     private UserService userService;
@@ -44,7 +46,7 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
                 .alwaysDo(print())
                 .build();
 
@@ -60,7 +62,7 @@ public class UserControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-       Employee employee = Employee.builder()
+        Employee employee = Employee.builder()
                 .id(1L)
                 .user(user)
                 .cpf("12345678900")
@@ -76,20 +78,8 @@ public class UserControllerTest {
                 .build();
     }
 
-//    @Test
-//    public void shouldGetAllUsersWithSuccess() throws Exception {
-//
-//        mockMvc.perform(get("api/v1/users")
-//                    .contentType(MediaType.APPLICATION_JSON))
-//                .andExpectAll(MockMvcResultMatchers.status().isOk())
-//                .andReturn();
-//
-//        verify(userService).getAllUsers();
-//        verifyNoMoreInteractions(userService);
-//    }
-
     @Test
-    public void shouldGetEmployeeByIdWithSuccess() throws Exception {
+    public void testGetEmployeeById() throws Exception {
 
         mockMvc.perform(get("/api/v1/users/{id}/employee", userId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -101,12 +91,52 @@ public class UserControllerTest {
     }
 
     @Test
-    public void shouldGetUserByIdWithSuccess() throws Exception {
+    public void testGetCompanyById() throws Exception {
 
-        mockMvc.perform(get("/api/v1/users/me", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/users/{id}/company", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
+        verify(userService).getCompany(userId);
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    public void testGetCollaboratorById() throws Exception {
+
+        mockMvc.perform(get("/api/v1/users/{id}/collaborator", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        verify(userService).getCollaborator(userId);
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    void testUpdateUserReturnsUpdatedUser() {
+        Long id = 1L;
+        User updatedUser = new User();
+        updatedUser.setId(id);
+        updatedUser.setPhoneNumber("098-765-4321");
+
+        when(userService.updateUser(id, updatedUser)).thenReturn(updatedUser);
+
+        ResponseEntity<User> response = userController.updateUser(id, updatedUser);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(updatedUser, response.getBody());
+    }
+
+    @Test
+    void testDeleteUser() {
+        Long id = 1L;
+
+        ResponseEntity<Void> response = userController.deleteUser(id);
+
+        verify(userService).deleteUser(id);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
 }
