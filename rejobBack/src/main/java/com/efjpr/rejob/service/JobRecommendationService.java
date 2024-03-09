@@ -22,6 +22,23 @@ public class JobRecommendationService {
 
     private final JobRepository jobRepository;
     private final JobApplicationRepository jobApplicationRepository;
+    public List<Job> getBestJobs(Employee employee) {
+        List<Job> appliedJobs = jobApplicationRepository.findAllByApplicant(employee).stream().map(JobApplication::getJob).toList();
+
+        List<Job> allJobs = jobRepository.findOpenJobs();
+        allJobs.removeIf(appliedJobs::contains);
+
+        Map<Job, Double> jobSimilarities = new HashMap<>();
+        for (Job job : allJobs) {
+            double similarity = calculateJaccardSimilarity(employee.getProfessionalExperience(), job.getRequiredExperience());
+            jobSimilarities.put(job, similarity);
+        }
+
+        List<Job> recommendedJobs = new ArrayList<>(allJobs);
+        recommendedJobs.sort((job1, job2) -> Double.compare(jobSimilarities.get(job2), jobSimilarities.get(job1)));
+
+        return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 4));
+    }
 
     public static double calculateJaccardSimilarity(String str1, String str2) {
         Set<String> set1 = tokenizeAndStem(removeStopwords(str1));
@@ -67,23 +84,6 @@ public class JobRecommendationService {
         return text.trim();
     }
 
-    public List<Job> getBestJobs(Employee employee) {
-        List<Job> appliedJobs = jobApplicationRepository.findAllByApplicant(employee).stream().map(JobApplication::getJob).toList();
-
-        List<Job> allJobs = jobRepository.findAll();
-        allJobs.removeIf(appliedJobs::contains);
-
-        Map<Job, Double> jobSimilarities = new HashMap<>();
-        for (Job job : allJobs) {
-            double similarity = calculateJaccardSimilarity(employee.getProfessionalExperience(), job.getRequiredExperience());
-            jobSimilarities.put(job, similarity);
-        }
-
-        List<Job> recommendedJobs = new ArrayList<>(allJobs);
-        recommendedJobs.sort((job1, job2) -> Double.compare(jobSimilarities.get(job2), jobSimilarities.get(job1)));
-
-        return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 4));
-    }
 
 
 }

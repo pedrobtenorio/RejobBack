@@ -4,6 +4,7 @@ import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
+import com.efjpr.rejob.domain.Enums.JobStatus;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.repository.CollaboratorRepository;
 import com.efjpr.rejob.repository.JobRepository;
@@ -31,6 +32,15 @@ public class JobService {
                 .map(this::convertToJobResponse)
                 .collect(Collectors.toList());
     }
+
+    public List<JobResponse> getAllOpenJobs() {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream()
+                .filter(job -> !job.getJobStatus().equals(JobStatus.CLOSED) && !job.getJobStatus().equals(JobStatus.COMPLETED))
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
 
     public List<JobResponse> getAllJobsByCollaboratorId(Long collaboratorId) {
         List<Job> jobs = jobRepository.findAll();
