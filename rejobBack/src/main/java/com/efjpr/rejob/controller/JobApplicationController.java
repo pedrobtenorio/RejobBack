@@ -36,6 +36,12 @@ public class JobApplicationController {
         return jobApplicationOptional.map(jobApplication -> new ResponseEntity<>(jobApplication, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/{applicantId}/{jobId}")
+    public ResponseEntity<JobApplication> getJobApplicationApplicantIdAndJobId(@PathVariable Long applicantId, @PathVariable Long jobId) {
+        JobApplication jobApplication= jobApplicationService.findByApplicantAndJob(applicantId, jobId);
+        return new ResponseEntity<>(jobApplication, HttpStatus.OK);
+    }
+
     @GetMapping("my-applications/{employeeId}")
     public ResponseEntity<List<JobApplication>> getApplications(@PathVariable Long employeeId) {
         return new ResponseEntity<>(jobApplicationService.findByEmployeeId(employeeId), HttpStatus.OK);
@@ -60,9 +66,9 @@ public class JobApplicationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<JobApplication> updateJobApplication(@PathVariable Long id, @RequestBody updateJobApplication request) {
-        JobApplication jobApplication = jobApplicationService.updateJobApplication(id, request.getStatus(), request.getFeedback());
+    @PutMapping("/{applicantId}/{jobId}")
+    public ResponseEntity<JobApplication> updateJobApplication(@PathVariable Long applicantId, @PathVariable Long jobId, @RequestBody updateJobApplication request) {
+        JobApplication jobApplication = jobApplicationService.updateJobApplication(applicantId, jobId,request.getStatus(), request.getFeedback());
         return new ResponseEntity<>(jobApplication, HttpStatus.OK);
     }
 }
