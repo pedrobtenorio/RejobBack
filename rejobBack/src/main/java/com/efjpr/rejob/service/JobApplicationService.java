@@ -62,9 +62,15 @@ public class JobApplicationService {
         jobApplicationRepository.deleteById(id);
     }
 
+    public JobApplication findByApplicantAndJob(Long employeeId, Long jobId) {
+        Employee applicant = employeeService.findById(employeeId);
+        Job job = jobService.findById(jobId);
+        return jobApplicationRepository.findByApplicantAndJob(applicant, job);
+    }
 
-    public JobApplication updateJobApplication(Long id, ApplicationStatus status, String feedback) {
-        JobApplication jobApplication = findJobApplicationById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with id " + id + " not found"));
+
+    public JobApplication updateJobApplication(Long employeeId, Long jobId, ApplicationStatus status, String feedback) {
+        JobApplication jobApplication = findByApplicantAndJob(employeeId, jobId);
         jobApplication.setStatus(status);
         jobApplication.setFeedback(feedback);
         return jobApplicationRepository.save(jobApplication);
