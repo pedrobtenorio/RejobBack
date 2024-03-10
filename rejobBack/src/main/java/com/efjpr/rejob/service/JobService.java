@@ -4,6 +4,7 @@ import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
+import com.efjpr.rejob.domain.Dto.StatusRequest;
 import com.efjpr.rejob.domain.Enums.JobStatus;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.repository.CollaboratorRepository;
@@ -155,5 +156,16 @@ public class JobService {
         return jobs.stream()
                 .map(this::convertToJobResponse)
                 .collect(Collectors.toList());
+    }
+
+    public JobResponse updateJobStatus(Long id, StatusRequest newStatus) {
+        JobStatus status = JobStatus.valueOf(newStatus.getStatus());
+        Job job = jobRepository.findById(id).orElse(null);
+        if (job == null) {
+            throw new IllegalArgumentException("Job not found with id: " + id);
+        }
+        job.setJobStatus(status);
+        jobRepository.save(job);
+        return convertToJobResponse(job);
     }
 }

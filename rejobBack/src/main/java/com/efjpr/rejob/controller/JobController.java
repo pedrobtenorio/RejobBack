@@ -3,6 +3,8 @@ package com.efjpr.rejob.controller;
 import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
+import com.efjpr.rejob.domain.Dto.StatusRequest;
+import com.efjpr.rejob.domain.Enums.JobStatus;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.service.JobService;
 import lombok.AllArgsConstructor;
@@ -61,6 +63,11 @@ public class JobController {
     @PutMapping("/{id}")
     public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody JobCreate updatedJob) {
         return new ResponseEntity<>(jobService.updateJob(id, updatedJob), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<JobResponse> changeStatus(@PathVariable Long id, @RequestBody StatusRequest newStatus) {
+        return new ResponseEntity<>(jobService.updateJobStatus(id, newStatus), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
