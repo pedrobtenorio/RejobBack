@@ -115,7 +115,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testUpdateUserReturnsUpdatedUser() {
+    public void testUpdateUserReturnsUpdatedUser() {
         Long id = 1L;
         User updatedUser = new User();
         updatedUser.setId(id);
