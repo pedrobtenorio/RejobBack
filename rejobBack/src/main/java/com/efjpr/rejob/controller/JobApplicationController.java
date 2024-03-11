@@ -52,6 +52,12 @@ public class JobApplicationController {
         return new ResponseEntity<>(jobApplicationService.findApplicantsByJobId(JobId), HttpStatus.OK);
     }
 
+    @GetMapping("job/{JobId}")
+    public ResponseEntity<List<JobApplication>> findByJobId(@PathVariable Long JobId) {
+        return new ResponseEntity<>(jobApplicationService.findByJobId(JobId), HttpStatus.OK);
+    }
+
+
 
 
     @GetMapping

@@ -81,6 +81,13 @@ public class JobApplicationService {
         return jobApplicationRepository.findAllByApplicant(applicant);
     }
 
+    public List<JobApplication> findByJobId(Long jobId) {
+        if (jobId == null) {
+            return Collections.emptyList();
+        }
+        return jobApplicationRepository.findAllByJobId(jobId);
+    }
+
     public List<Employee> findApplicantsByJobId(Long jobId) {
         if (jobId == null) {
             return Collections.emptyList();
