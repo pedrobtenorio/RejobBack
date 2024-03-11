@@ -70,6 +70,15 @@ public class JobController {
         return new ResponseEntity<>(jobService.updateJobStatus(id, newStatus), HttpStatus.OK);
     }
 
+    @GetMapping("/jobs")
+    public List<JobResponse> searchJobs(@RequestParam(required = false) String name,
+                                @RequestParam(required = false) String categories,
+                                @RequestParam(required = false) Float minSalary,
+                                @RequestParam(required = false) Float maxSalary,
+                                @RequestParam(required = false) String state) {
+        return jobService.searchJobs(name, categories, minSalary, maxSalary, state);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);
