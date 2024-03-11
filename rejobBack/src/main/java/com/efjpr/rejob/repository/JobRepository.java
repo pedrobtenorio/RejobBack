@@ -16,4 +16,16 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             "OR j.jobStatus = com.efjpr.rejob.domain.Enums.JobStatus.IN_PROGRESS")
     List<Job> findOpenJobs();
 
+    @Query("SELECT j FROM Job j " +
+            "WHERE (:name is null or lower(j.jobTitle) like %:name%) " +
+            "AND (:categories is null or lower(j.categories) like %:categories%) " +
+            "AND (:minSalary is null or j.salaryRange.salaryRangeMin >= :minSalary) " +
+            "AND (:maxSalary is null or j.salaryRange.salaryRangeMax <= :maxSalary) " +
+            "AND (:state is null or lower(j.companyLocation.state) like %:state%)")
+    List<Job> searchJobs(@Param("name") String name,
+                         @Param("categories") String categories,
+                         @Param("minSalary") Float minSalary,
+                         @Param("maxSalary") Float maxSalary,
+                         @Param("state") String state);
+
 }

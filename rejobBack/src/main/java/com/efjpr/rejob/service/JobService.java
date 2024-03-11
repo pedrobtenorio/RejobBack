@@ -51,6 +51,13 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobResponse> searchJobs(String name, String categories, Float minSalary, Float maxSalary, String state) {
+        List<Job> jobs = jobRepository.searchJobs(name, categories, minSalary, maxSalary, state);
+        return jobs.stream()
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
     public Job createJob(JobCreate jobPayload) {
         Collaborator contactPerson = collaboratorRepository.findById(jobPayload.getContactPersonId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + jobPayload.getContactPersonId() + " not found"));
@@ -72,6 +79,7 @@ public class JobService {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found"));
     }
+
 
     public List<Job> getJobByCompanyId(long companyId) {
         return jobRepository.findByCompanyId(companyId);
