@@ -7,6 +7,7 @@ import com.efjpr.rejob.domain.User;
 import com.efjpr.rejob.repository.UserRepository;
 import com.efjpr.rejob.service.email.EmailService;
 import com.efjpr.rejob.service.email.EmailServiceImpl;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +36,7 @@ public class AuthService {
     private final EmployeeService employeeService;
     private final EmailServiceImpl emailService;
     private final CompanyService companyService;
-
+    @Transactional
     public AuthResponse register(CollaboratorRegisterRequest request) {
         User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.COLLABORATOR);
         var token = jwtService.generateToken(user);
@@ -50,7 +51,7 @@ public class AuthService {
                 .token(token)
                 .build();
     }
-
+    @Transactional
     public AuthResponseCompany register(CompanyRegisterRequest request) {
         User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhone(), Role.COMPANY);
         var token = jwtService.generateToken(user);
@@ -63,7 +64,7 @@ public class AuthService {
                 .company(company)
                 .build();
     }
-
+    @Transactional
     public AuthResponse register(EmployeeRegisterRequest request) {
 
         User user = createUser(request.getEmail(), request.getName(), request.getPassword(), request.getPhoneNumber(), Role.USER);

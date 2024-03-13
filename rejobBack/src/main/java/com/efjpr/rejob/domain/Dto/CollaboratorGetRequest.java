@@ -13,4 +13,5 @@ public class CollaboratorGetRequest {
     private String jobTitle;
     private CollaboratorType collaboratorType;
     private Long companyId;
+    private Long collaboratorId;
 }
