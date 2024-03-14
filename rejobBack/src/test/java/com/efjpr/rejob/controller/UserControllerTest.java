@@ -121,11 +121,8 @@ public class UserControllerTest {
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
 
-        // Configurar o SecurityContextHolder para retornar o SecurityContext mockado
         SecurityContextHolder.setContext(securityContext);
-        // Configurar o SecurityContext mockado para retornar o Authentication mockado
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        // Configurar o Authentication mockado para retornar um objeto diferente de User
         when(authentication.getPrincipal()).thenReturn(new Object());
 
         assertThrows(IllegalStateException.class, () -> userController.getUser());
