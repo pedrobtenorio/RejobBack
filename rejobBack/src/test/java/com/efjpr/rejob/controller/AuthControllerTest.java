@@ -58,6 +58,7 @@ public class AuthControllerTest {
         assertEquals(response, result.getBody());
     }
 
+// Teste comentado pois a permissão de acesso a AuthResponseCompany é restrita
 //    @Test
 //    void testRegisterCompany() {
 //        CompanyRegisterRequest request = new CompanyRegisterRequest();

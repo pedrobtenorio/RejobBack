@@ -150,16 +150,4 @@ public class JobControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
-//    @Test
-//    public void testGetJobByCompanyId() throws Exception {
-//
-//        mockMvc.perform(get("api/v1/jobs/job-list/{companyId}", companyId)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andReturn();
-//
-//        verify(jobService).getJobByCompanyId(companyId);
-//        verifyNoMoreInteractions(jobService);
-//    }
-
 }

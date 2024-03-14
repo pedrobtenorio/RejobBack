@@ -15,16 +15,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Arrays;
+import java.util.List;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,7 +46,6 @@ public class UserControllerTest {
     private UserService userService;
 
     MockMvc mockMvc;
-
 
     private Long userId = 1L;
 
@@ -79,7 +85,56 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetEmployeeById() throws Exception {
+    void testGetAllUsers() {
+        List<User> users = Arrays.asList(new User(), new User());
+
+        when(userService.getAllUsers()).thenReturn(users);
+
+        ResponseEntity<List<User>> response = userController.getAllUsers();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(users, response.getBody());
+    }
+
+    @Test
+    void testGetUser() {
+        User user = new User();
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        // Configura o SecurityContextHolder para retornar o SecurityContext mockado
+        SecurityContextHolder.setContext(securityContext);
+        // Configura o SecurityContext mockado para retornar o Authentication mockado
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        // Configura o Authentication mockado para retornar o usuário
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // Chama o método a ser testado
+        User result = userController.getUser();
+
+        // Verifica se o usuário retornado é o mesmo configurado
+        assertEquals(user, result);
+    }
+
+    @Test
+    void testGetUserNotUserPrincipal() {
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        // Configurar o SecurityContextHolder para retornar o SecurityContext mockado
+        SecurityContextHolder.setContext(securityContext);
+        // Configurar o SecurityContext mockado para retornar o Authentication mockado
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        // Configurar o Authentication mockado para retornar um objeto diferente de User
+        when(authentication.getPrincipal()).thenReturn(new Object());
+
+        assertThrows(IllegalStateException.class, () -> userController.getUser());
+    }
+
+
+
+    @Test
+    public void testGetEmployeeByUserId() throws Exception {
 
         mockMvc.perform(get("/api/v1/users/{id}/employee", userId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -91,7 +146,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetCompanyById() throws Exception {
+    public void testGetCompanyByUserId() throws Exception {
 
         mockMvc.perform(get("/api/v1/users/{id}/company", userId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -115,7 +170,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testUpdateUserReturnsUpdatedUser() {
+    public void testUpdateUser() {
         Long id = 1L;
         User updatedUser = new User();
         updatedUser.setId(id);
