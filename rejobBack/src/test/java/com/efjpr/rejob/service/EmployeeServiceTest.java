@@ -24,11 +24,9 @@ class EmployeeServiceTest {
     void testCreateEmployee() {
         EmployeeRegisterRequest request = new EmployeeRegisterRequest();
         request.setCpf("12345678900");
-        // Set other fields as needed
 
         User user = new User();
         user.setEmail("test@example.com");
-        // Set other user fields as needed
 
         when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
