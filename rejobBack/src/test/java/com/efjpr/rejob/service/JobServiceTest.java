@@ -93,7 +93,7 @@ class JobServiceTest {
     @Test
     void testGetJobById() {
         Collaborator contactPerson = new Collaborator();
-        contactPerson.setCompany(new Company()); // Assuming Collaborator has a Company association
+        contactPerson.setCompany(new Company());
         Job job = new Job();
         job.setContactPerson(contactPerson);
 
