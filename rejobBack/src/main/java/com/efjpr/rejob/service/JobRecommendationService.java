@@ -40,7 +40,11 @@ public class JobRecommendationService {
         return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 4));
     }
 
-    public static double calculateJaccardSimilarity(String str1, String str2) {
+    public double similarity(Employee employee, Job job) {
+        return calculateJaccardSimilarity(employee.getProfessionalExperience(), job.getRequiredExperience());
+    }
+
+    private static double calculateJaccardSimilarity(String str1, String str2) {
         Set<String> set1 = tokenizeAndStem(removeStopwords(str1));
         Set<String> set2 = tokenizeAndStem(removeStopwords(str2));
 
@@ -52,7 +56,7 @@ public class JobRecommendationService {
         return (double) intersection.size() / union.size();
     }
 
-    public static Set<String> tokenizeAndStem(String text) {
+    private static Set<String> tokenizeAndStem(String text) {
         Set<String> stemmedTokens = new HashSet<>();
 
         try (BrazilianAnalyzer analyzer = new BrazilianAnalyzer()) {
@@ -75,7 +79,7 @@ public class JobRecommendationService {
         return stemmedTokens;
     }
 
-    public static String removeStopwords(String text) {
+    private static String removeStopwords(String text) {
         Set<String> stopWords = StopWords.getPortugueseStopwords();
         for (String stopWord : stopWords) {
             text = text.replaceAll("\\b" + stopWord + "\\b", "");
