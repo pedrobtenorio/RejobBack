@@ -49,6 +49,8 @@ public class UserControllerTest {
 
     private Long userId = 1L;
 
+    private User user;
+
 
     @BeforeEach
     public void setUp() {
@@ -56,7 +58,7 @@ public class UserControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        User user = User.builder()
+        user = User.builder()
                 .id(1L)
                 .name("John Doe")
                 .role(Role.USER)
@@ -86,7 +88,7 @@ public class UserControllerTest {
 
     @Test
     void testGetAllUsers() {
-        List<User> users = Arrays.asList(new User(), new User());
+        List<User> users = Arrays.asList(user, new User());
 
         when(userService.getAllUsers()).thenReturn(users);
 
@@ -98,7 +100,7 @@ public class UserControllerTest {
 
     @Test
     void testGetUser() {
-        User user = new User();
+        User user1 = user;
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
 
@@ -113,7 +115,7 @@ public class UserControllerTest {
         User result = userController.getUser();
 
         // Verifica se o usuário retornado é o mesmo configurado
-        assertEquals(user, result);
+        assertEquals(user1, result);
     }
 
     @Test
