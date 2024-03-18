@@ -51,6 +51,8 @@ public class UserControllerTest {
 
     private User user;
 
+    private Employee employee;
+
 
     @BeforeEach
     public void setUp() {
@@ -70,7 +72,7 @@ public class UserControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-        Employee employee = Employee.builder()
+        employee = Employee.builder()
                 .id(1L)
                 .user(user)
                 .cpf("12345678900")
@@ -171,7 +173,7 @@ public class UserControllerTest {
     @Test
     public void testUpdateUser() {
         Long id = 1L;
-        User updatedUser = new User();
+        User updatedUser = user;
         updatedUser.setId(id);
         updatedUser.setPhoneNumber("098-765-4321");
 
