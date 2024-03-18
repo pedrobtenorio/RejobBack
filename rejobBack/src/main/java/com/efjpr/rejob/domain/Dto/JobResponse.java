@@ -29,4 +29,5 @@ public class JobResponse {
     private EmploymentContractType employmentContractType;
     private JobStatus jobStatus;
     private String companyName;
+    private Boolean hasNewApplicant;
 }
