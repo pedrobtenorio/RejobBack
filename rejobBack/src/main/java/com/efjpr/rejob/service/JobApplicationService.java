@@ -35,6 +35,7 @@ public class JobApplicationService {
     public JobApplication saveJobApplication(JobApplicationRequest jobApplicationRequest) {
         Employee applicant = employeeService.findById(jobApplicationRequest.getApplicantId());
         Job job = jobService.findById(jobApplicationRequest.getJobId());
+        jobService.updateHasNewApplicant(job, true);
         double score = jobRecommendationService.similarity(applicant, job);
         if (applicationExists(applicant, job)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Already applied");

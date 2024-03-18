@@ -70,8 +70,7 @@ public class JobService {
     public JobResponse getJobById(Long id) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found"));
-
-        // Convert Job to JobResponse
+        updateHasNewApplicant(job, false);
         return convertToJobResponse(job);
     }
 
@@ -94,6 +93,11 @@ public class JobService {
 
         validateAndApplyUpdates(existingJob, updatedJob, contactPerson);
         return jobRepository.save(existingJob);
+    }
+
+    public void updateHasNewApplicant(Job job, boolean hasNewApplicant) {
+        job.setHasNewApplicant(hasNewApplicant);
+        jobRepository.save(job);
     }
 
     public void deleteJob(Long id) {
@@ -154,6 +158,7 @@ public class JobService {
         jobResponse.setEmploymentContractType(job.getEmploymentContractType());
         jobResponse.setJobStatus(job.getJobStatus());
         jobResponse.setCompanyName(job.getContactPerson().getCompany().getName());
+        jobResponse.setHasNewApplicant(job.getHasNewApplicant());
 
         return jobResponse;
     }
