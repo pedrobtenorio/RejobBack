@@ -4,6 +4,7 @@ import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
+import com.efjpr.rejob.domain.Dto.StatusRequest;
 import com.efjpr.rejob.domain.Enums.JobStatus;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.repository.CollaboratorRepository;
@@ -50,6 +51,13 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
+    public List<JobResponse> searchJobs(String name, String categories, Float minSalary, Float maxSalary, String state) {
+        List<Job> jobs = jobRepository.searchJobs(name, categories, minSalary, maxSalary, state);
+        return jobs.stream()
+                .map(this::convertToJobResponse)
+                .collect(Collectors.toList());
+    }
+
     public Job createJob(JobCreate jobPayload) {
         Collaborator contactPerson = collaboratorRepository.findById(jobPayload.getContactPersonId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collaborator with ID " + jobPayload.getContactPersonId() + " not found"));
@@ -62,8 +70,7 @@ public class JobService {
     public JobResponse getJobById(Long id) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found"));
-
-        // Convert Job to JobResponse
+        updateHasNewApplicant(job, false);
         return convertToJobResponse(job);
     }
 
@@ -71,6 +78,7 @@ public class JobService {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job with id " + id + " not found"));
     }
+
 
     public List<Job> getJobByCompanyId(long companyId) {
         return jobRepository.findByCompanyId(companyId);
@@ -85,6 +93,11 @@ public class JobService {
 
         validateAndApplyUpdates(existingJob, updatedJob, contactPerson);
         return jobRepository.save(existingJob);
+    }
+
+    public void updateHasNewApplicant(Job job, boolean hasNewApplicant) {
+        job.setHasNewApplicant(hasNewApplicant);
+        jobRepository.save(job);
     }
 
     public void deleteJob(Long id) {
@@ -145,6 +158,7 @@ public class JobService {
         jobResponse.setEmploymentContractType(job.getEmploymentContractType());
         jobResponse.setJobStatus(job.getJobStatus());
         jobResponse.setCompanyName(job.getContactPerson().getCompany().getName());
+        jobResponse.setHasNewApplicant(job.getHasNewApplicant());
 
         return jobResponse;
     }
@@ -155,5 +169,16 @@ public class JobService {
         return jobs.stream()
                 .map(this::convertToJobResponse)
                 .collect(Collectors.toList());
+    }
+
+    public JobResponse updateJobStatus(Long id, StatusRequest newStatus) {
+        JobStatus status = JobStatus.valueOf(newStatus.getStatus());
+        Job job = jobRepository.findById(id).orElse(null);
+        if (job == null) {
+            throw new IllegalArgumentException("Job not found with id: " + id);
+        }
+        job.setJobStatus(status);
+        jobRepository.save(job);
+        return convertToJobResponse(job);
     }
 }
