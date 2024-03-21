@@ -2,6 +2,7 @@ package com.efjpr.rejob.service;
 import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
 import com.efjpr.rejob.domain.Dto.CompanyRegisterRequest;
+import com.efjpr.rejob.domain.Enums.CollaboratorType;
 import com.efjpr.rejob.domain.Enums.CompanyType;
 import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.Location;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,6 +51,8 @@ class CompanyServiceTest {
 
     private Company company;
 
+    private Collaborator collaborator;
+
     public CompanyServiceTest() {
         MockitoAnnotations.openMocks(this);
     }
@@ -73,7 +75,6 @@ class CompanyServiceTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-
         company = Company.builder()
                 .id(1L)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
@@ -85,7 +86,15 @@ class CompanyServiceTest {
                 .numberOfEmployees(100)
                 .user(user)
                 .headquarters(new Location("Maceio", "Alagoas", "Vergel"))
-                .name("Company Name")
+                .name("Verde Cultura")
+                .build();
+
+        collaborator = Collaborator.builder()
+                .id(1L)
+                .user(user)
+                .jobTitle("Cozinheiro")
+                .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
+                .company(company)
                 .build();
 
     }
@@ -108,29 +117,31 @@ class CompanyServiceTest {
     @Test
     void testGetCompanyById() {
         Company company1 = company;
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company1));
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
 
         Company result = companyService.getCompanyById(1L);
 
-        assertEquals(company, result);
+        assertEquals(company1, result);
     }
 
     @Test
     void testFindByUser() {
-        User user = new User();
-        Company company = new Company();
+        User user1 = user;
+        Company company1 = company;
+        company.setUser(user1);
+
         when(companyRepository.findByUser(user)).thenReturn(Optional.of(company));
 
         Company result = companyService.findByUser(user);
 
-        assertEquals(company, result);
+        assertEquals(company1, result);
     }
 
     @Test
     void testSetUserToCompany() {
-        Collaborator collaborator = new Collaborator();
-        Company company = new Company();
-        companyService.setUserToCompany(collaborator, company);
+        Collaborator collaborator1 = collaborator;
+        Company company1 = company;
+        companyService.setUserToCompany(collaborator1, company1);
 
         verify(companyRepository, times(1)).save(company);
         assertEquals(1, company.getCollaborators().size());
@@ -138,12 +149,11 @@ class CompanyServiceTest {
 
     @Test
     void testUpdateCompany() {
-        Company existingCompany = new Company();
-        Company updatedCompany = new Company();
-        updatedCompany.setName("Updated Company");
+        Company updatedCompany = company;
+        updatedCompany.setName("Updated Company Name");
 
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompany));
-        when(companyRepository.save(existingCompany)).thenReturn(existingCompany);
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(updatedCompany));
+        when(companyRepository.save(updatedCompany)).thenReturn(updatedCompany);
 
         Company result = companyService.updateCompany(1L, updatedCompany);
 
@@ -152,17 +162,16 @@ class CompanyServiceTest {
 
     @Test
     void testUpdateCompanyNotFound() {
-        Company updatedCompany = new Company();
-        updatedCompany.setName("Updated Company");
+        Company updatedCompany = company;
 
-        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
+        when(companyRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> companyService.updateCompany(1L, updatedCompany));
+        assertThrows(ResponseStatusException.class, () -> companyService.updateCompany(2L, updatedCompany));
     }
 
     @Test
     void testDeleteCompany() {
-        Company companyToDelete = new Company();
+        Company companyToDelete = company;
         when(companyRepository.findById(1L)).thenReturn(Optional.of(companyToDelete));
 
         companyService.deleteCompany(1L);
@@ -172,17 +181,17 @@ class CompanyServiceTest {
 
     @Test
     void testDeleteCompanyNotFound() {
-        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
+        when(companyRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> companyService.deleteCompany(1L));
+        assertThrows(ResponseStatusException.class, () -> companyService.deleteCompany(2L));
     }
 
     @Test
     void testGetCompanyByCollaboratorId() {
-        Collaborator collaborator = new Collaborator();
-        collaborator.setCompany(new Company());
+        Collaborator collaborator1 = collaborator;
+        collaborator.setCompany(company);
 
-        when(collaboratorRepository.findById(1L)).thenReturn(Optional.of(collaborator));
+        when(collaboratorRepository.findById(1L)).thenReturn(Optional.of(collaborator1));
 
         Company result = companyService.getCompanyByCollaboratorId(1L);
 
@@ -191,9 +200,9 @@ class CompanyServiceTest {
 
     @Test
     void testGetCompanyByCollaboratorIdCollaboratorNotFound() {
-        when(collaboratorRepository.findById(1L)).thenReturn(Optional.empty());
+        when(collaboratorRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> companyService.getCompanyByCollaboratorId(1L));
+        assertThrows(ResponseStatusException.class, () -> companyService.getCompanyByCollaboratorId(2L));
     }
 
     @Test
@@ -208,10 +217,11 @@ class CompanyServiceTest {
 
     @Test
     void testGetAllCompanies() {
-        List<Company> companies = new ArrayList<>();
-        companies.add(new Company());
-        companies.add(new Company());
-        companies.add(new Company());
+        Company company1 = company;
+
+        Company company2 = new Company(2L, "22222222222222", "Secos e Frios", "Mercado", 50, new Location("Maceio", "Alagoas", "Benedito Bentes"), "222-222-2222", "Mercado especializado em secos, queijos e vinhos", "company@example.com", CompanyType.EMPRESA_COMERCIAL, user, null);
+
+        List<Company> companies = Arrays.asList(company1, company2);
 
         when(companyRepository.findAll()).thenReturn(companies);
 
