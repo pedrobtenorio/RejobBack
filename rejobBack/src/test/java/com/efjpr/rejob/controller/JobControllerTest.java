@@ -3,8 +3,7 @@ package com.efjpr.rejob.controller;
 import com.efjpr.rejob.domain.*;
 import com.efjpr.rejob.domain.Dto.JobCreate;
 import com.efjpr.rejob.domain.Dto.JobResponse;
-import com.efjpr.rejob.domain.Enums.CompanyType;
-import com.efjpr.rejob.domain.Enums.Role;
+import com.efjpr.rejob.domain.Enums.*;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.service.JobService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +40,8 @@ public class JobControllerTest {
 
     MockMvc mockMvc;
 
+    private Job job;
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(jobController)
@@ -61,6 +62,7 @@ public class JobControllerTest {
 
 
         Company company = Company.builder()
+                .id(1L)
                 .companyType(CompanyType.ONG)
                 .cnpj("12345678901234")
                 .businessActivity("Agricultura")
@@ -74,19 +76,41 @@ public class JobControllerTest {
                 .build();
 
 
+        job = Job.builder()
+                .id(1L)
+                .companyLocation(new Location("Maceio", "Alagoas", "Jaragua"))
+                .jobType("Programador")
+                .categories("Júnior")
+                .contactPerson(new Collaborator())
+                .jobTitle("Desenvolvedor Back-End")
+                .requirements("Conhecimentos básicos em Java e Springboot")
+                .jobDescription("Trabalhar em equipe no desenvolvimentos de sistemas")
+                .benefits("Dinheiro")
+                .employmentType("Remoto")
+                .applicationDeadline(new Date(2024, Calendar.DECEMBER, 30))
+                .salaryRange(new SalaryRange(2000, 2500))
+                .educationLevel(EducationLevel.ENSINO_MEDIO_COMPLETO)
+                .employmentContractType(EmploymentContractType.CLT)
+                .jobStatus(JobStatus.ACTIVE)
+                .requiredExperience("Experiência em criação de aplicações utilizando Springboot")
+                .responsibilities("Responsibilities")
+                .createdAt(new Date(System.currentTimeMillis()))
+                .updatedAt(new Date(System.currentTimeMillis()))
+                .build();
+
     }
 
     @Test
     void testCreateJob() {
         JobCreate jobCreate = new JobCreate();
-        Job job = new Job();
+        Job job1 = job;
 
-        when(jobService.createJob(jobCreate)).thenReturn(job);
+        when(jobService.createJob(jobCreate)).thenReturn(job1);
 
         ResponseEntity<Job> response = jobController.createJob(jobCreate);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(job, response.getBody());
+        assertEquals(job1, response.getBody());
     }
 
     @Test
@@ -104,7 +128,7 @@ public class JobControllerTest {
     @Test
     void testGetJobByCompanyId() {
         Long companyId = 1L;
-        List<Job> jobs = Arrays.asList(new Job(), new Job());
+        List<Job> jobs = Arrays.asList(job, new Job());
 
         when(jobService.getJobByCompanyId(companyId)).thenReturn(jobs);
 
@@ -130,7 +154,9 @@ public class JobControllerTest {
     @Test
     void testUpdateJob() {
         Long id = 1L;
-        Job updatedJob = new Job();
+        Job updatedJob = job;
+        updatedJob.setRequiredExperience("Nenhuma");
+        updatedJob.setCompanyLocation(new Location("Recife", "Pernambuco", "Boa Viagem"));
 
         when(jobService.updateJob(id, updatedJob)).thenReturn(updatedJob);
 
@@ -143,6 +169,7 @@ public class JobControllerTest {
     @Test
     void testDeleteJob() {
         Long id = 1L;
+        Job job1 = job;
 
         ResponseEntity<Void> response = jobController.deleteJob(id);
 

@@ -2,10 +2,12 @@ package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.Collaborator;
 import com.efjpr.rejob.domain.Company;
+import com.efjpr.rejob.domain.Enums.CollaboratorType;
 import com.efjpr.rejob.domain.Enums.CompanyType;
 import com.efjpr.rejob.domain.Enums.Role;
 import com.efjpr.rejob.domain.Location;
 import com.efjpr.rejob.domain.User;
+import com.efjpr.rejob.service.CollaboratorService;
 import com.efjpr.rejob.service.CompanyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,13 @@ public class CompanyControllerTest {
     @InjectMocks
     private CompanyController companyController;
 
+    private CollaboratorService collaboratorService;
+
     MockMvc mockMvc;
+
+    private Company company;
+
+    private Collaborator collaborator;
 
     @BeforeEach
     public void setUp() {
@@ -58,17 +66,25 @@ public class CompanyControllerTest {
                 .build();
 
 
-        Company company = Company.builder()
-                .companyType(CompanyType.ONG)
+        company = Company.builder()
+                .id(1L)
+                .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
-                .businessActivity("Agricultura")
+                .businessActivity("Lanchonete")
                 .phone("123-456-7890")
-                .email("company@example.com")
-                .institutionalDescription("Description")
-                .numberOfEmployees(100)
+                .email("passaportedoalemao@example.com")
+                .institutionalDescription("Os melhores passaportes da cidade")
+                .numberOfEmployees(10)
                 .user(user)
-                .headquarters(new Location("Maceio", "Alagoas", "Vergel"))
-                .name("Company Name")
+                .headquarters(new Location("Maceio", "Alagoas", "Cruz das Almas"))
+                .name("Passaporte do Alemão")
+                .build();
+
+        Collaborator collaborator = Collaborator.builder()
+                .user(user)
+                .jobTitle("Cozinheiro")
+                .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
+                .company(company)
                 .build();
 
     }
@@ -76,59 +92,62 @@ public class CompanyControllerTest {
     @Test
     void testGetCompanyById() {
         Long companyId = 1L;
-        Company company = new Company();
+        Company company1 = company;
+        company1.setId(companyId);
 
-        when(companyService.getCompanyById(companyId)).thenReturn(company);
+        when(companyService.getCompanyById(companyId)).thenReturn(company1);
 
         ResponseEntity<Company> response = companyController.getCompanyById(companyId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company, response.getBody());
+        assertEquals(company1, response.getBody());
     }
 
     @Test
     void testGetCompanyByCollaboratorId() {
         Long collaboratorId = 1L;
-        Company company = new Company();
+        Company company1 = company;
 
-        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company);
+        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company1);
 
         ResponseEntity<Company> response = companyController.getCompanyByCollaboratorId(collaboratorId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company, response.getBody());
+        assertEquals(company1, response.getBody());
     }
 
     @Test
     void testGetCollaboratorListFromSameCompany() {
         Long collaboratorId = 1L;
-        Company company = new Company();
-        Collaborator collaborator = new Collaborator();
+        Company company1 = company;
 
-        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company);
+        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company1);
 
         ResponseEntity<List<Collaborator>> response = companyController.getCollaboratorListFromSameCompany(collaboratorId);
 
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertEquals(List.of(collaborator), response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testUpdateCompany() {
         Long companyId = 1L;
-        Company company = new Company();
+        Company updatedCompany = company;
+        updatedCompany.setName("Passaporte do Gaúcho");
+        updatedCompany.setNumberOfEmployees(15);
+        updatedCompany.setCompanyType(CompanyType.ONG);
 
-        when(companyService.updateCompany(companyId, company)).thenReturn(company);
+        when(companyService.updateCompany(companyId, updatedCompany)).thenReturn(updatedCompany);
 
-        ResponseEntity<Company> response = companyController.updateCompany(companyId, company);
+        ResponseEntity<Company> response = companyController.updateCompany(companyId, updatedCompany);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company, response.getBody());
+        assertEquals(updatedCompany, response.getBody());
     }
 
     @Test
     void testDeleteCompany() {
         Long companyId = 1L;
+        Company company1 = company;
 
         ResponseEntity<Void> response = companyController.deleteCompany(companyId);
 
@@ -138,7 +157,7 @@ public class CompanyControllerTest {
 
     @Test
     void testGetAllCompanies() {
-        List<Company> companies = Arrays.asList(new Company(), new Company());
+        List<Company> companies = Arrays.asList(company, new Company());
 
         when(companyService.getAllCompanies()).thenReturn(companies);
 

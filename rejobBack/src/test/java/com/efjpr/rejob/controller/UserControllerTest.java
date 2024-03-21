@@ -188,6 +188,8 @@ public class UserControllerTest {
     @Test
     void testDeleteUser() {
         Long id = 1L;
+        User user1 = user;
+        user1.setId(id);
 
         ResponseEntity<Void> response = userController.deleteUser(id);
 
