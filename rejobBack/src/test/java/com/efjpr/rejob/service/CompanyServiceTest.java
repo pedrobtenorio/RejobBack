@@ -42,12 +42,14 @@ class CompanyServiceTest {
     @Mock
     private UserService userService;
 
-    User user;
-
     @InjectMocks
     private CompanyService companyService;
 
     MockMvc mockMvc;
+
+    private User user;
+
+    private Company company;
 
     public CompanyServiceTest() {
         MockitoAnnotations.openMocks(this);
@@ -59,7 +61,7 @@ class CompanyServiceTest {
                 .alwaysDo(print())
                 .build();
 
-        User user = User.builder()
+        user = User.builder()
                 .id(1L)
                 .name("John Doe")
                 .role(Role.USER)
@@ -72,7 +74,8 @@ class CompanyServiceTest {
                 .build();
 
 
-        Company company = Company.builder()
+        company = Company.builder()
+                .id(1L)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Agricultura")
@@ -90,8 +93,7 @@ class CompanyServiceTest {
     @Test
     void testCreateCompany() {
         CompanyRegisterRequest request = new CompanyRegisterRequest();
-        User user = new User();
-        Company expectedCompany = new Company();
+        Company expectedCompany = company;
         expectedCompany.setUser(user);
 
         when(companyRepository.save(any(Company.class))).thenReturn(expectedCompany);
@@ -105,8 +107,8 @@ class CompanyServiceTest {
 
     @Test
     void testGetCompanyById() {
-        Company company = new Company();
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        Company company1 = company;
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company1));
 
         Company result = companyService.getCompanyById(1L);
 

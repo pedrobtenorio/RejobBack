@@ -1,10 +1,7 @@
 package com.efjpr.rejob.service;
 
-import com.efjpr.rejob.domain.Collaborator;
-import com.efjpr.rejob.domain.Company;
-import com.efjpr.rejob.domain.Employee;
-import com.efjpr.rejob.domain.Enums.Role;
-import com.efjpr.rejob.domain.User;
+import com.efjpr.rejob.domain.*;
+import com.efjpr.rejob.domain.Enums.*;
 import com.efjpr.rejob.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,11 +35,17 @@ public class UserServiceTest {
     @Mock
     private CompanyService companyService;
 
-    User user;
+    private User user;
+
+    private Company company;
+
+    private Collaborator collaborator;
+
+    private Employee employee;
 
     @BeforeEach
     public void setUp() {
-        User user = User.builder()
+        user = User.builder()
                 .id(1L)
                 .name("John Doe")
                 .role(Role.USER)
@@ -52,6 +55,43 @@ public class UserServiceTest {
                 .createdDate(new Date(2000, Calendar.JANUARY, 1))
                 .lastUpdatedDate(new Date(2000, Calendar.JANUARY, 1))
                 .profilePic("profile_pic_url")
+                .build();
+
+        company = Company.builder()
+                .id(1L)
+                .companyType(CompanyType.EMPRESA_COMERCIAL)
+                .cnpj("12345678901234")
+                .businessActivity("Lanchonete")
+                .phone("123-456-7890")
+                .email("passaportedoalemao@example.com")
+                .institutionalDescription("Os melhores passaportes da cidade")
+                .numberOfEmployees(10)
+                .user(user)
+                .headquarters(new Location("Maceio", "Alagoas", "Cruz das Almas"))
+                .name("Churrasquinho do Calvo")
+                .build();
+
+        collaborator = Collaborator.builder()
+                .id(1L)
+                .user(user)
+                .jobTitle("Cozinheiro")
+                .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
+                .company(company)
+                .build();
+
+        employee = Employee.builder()
+                .id(1L)
+                .user(user)
+                .cpf("12345678900")
+                .prisonCode("ABC123")
+                .educationLevel(EducationLevel.DOUTORADO_COMPLETO)
+                .dateOfBirth("1990, 5, 15")
+                .residenceLocation(new Location("Maceio", "Alagoas", "Vergel"))
+                .sentenceRegime(SentenceRegime.ABERTO)
+                .professionalExperience("5 years")
+                .areasOfInterest("Programming, Technology")
+                .skillsAndQualifications("Java, Spring Boot, SQL")
+                .educationalHistory("Bachelor's Degree in Computer Science")
                 .build();
     }
 
@@ -69,10 +109,9 @@ public class UserServiceTest {
     @Test
     void testGetUserById() {
         Long id = 1L;
-        User user = new User();
-        user.setId(id);
+        User user1 = user;
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(userRepository.findById(id)).thenReturn(Optional.of(user1));
 
         User result = userService.getUserById(id);
 
@@ -82,9 +121,6 @@ public class UserServiceTest {
     @Test
     void testGetCollaborator() {
         Long id = 1L;
-        User user = new User();
-        user.setId(id);
-        Collaborator collaborator = new Collaborator();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(collaboratorService.findByUser(user)).thenReturn(collaborator);
@@ -97,9 +133,6 @@ public class UserServiceTest {
     @Test
     void testGetEmployee() {
         Long id = 1L;
-        User user = new User();
-        user.setId(id);
-        Employee employee = new Employee();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(employeeService.findByUser(user)).thenReturn(employee);
@@ -112,9 +145,6 @@ public class UserServiceTest {
     @Test
     void testGetCompany() {
         Long id = 1L;
-        User user = new User();
-        user.setId(id);
-        Company company = new Company();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(companyService.findByUser(user)).thenReturn(company);
@@ -127,12 +157,12 @@ public class UserServiceTest {
     @Test
     void testUpdateUser() {
         Long id = 1L;
-        User existingUser = new User();
-        User updatedUser = new User();
+        User updatedUser = user;
         updatedUser.setId(id);
+        updatedUser.setPhoneNumber("321-654-987");
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(existingUser)).thenReturn(updatedUser);
+        when(userRepository.findById(id)).thenReturn(Optional.of(updatedUser));
+        when(userRepository.save(updatedUser)).thenReturn(updatedUser);
 
         User result = userService.updateUser(id, updatedUser);
 
@@ -142,7 +172,7 @@ public class UserServiceTest {
     @Test
     void testDeleteUser() {
         Long id = 1L;
-        User existingUser = new User();
+        User existingUser = user;
 
         when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
 
@@ -153,8 +183,8 @@ public class UserServiceTest {
 
     @Test
     void testUpdateUserNotFound() {
-        Long id = 1L;
-        User updatedUser = new User();
+        Long id = 2L;
+        User updatedUser = user;
 
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -163,7 +193,7 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUserNotFound() {
-        Long id = 1L;
+        Long id = 2L;
 
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 

@@ -51,9 +51,6 @@ public class UserControllerTest {
 
     private User user;
 
-    private Employee employee;
-
-
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
@@ -72,20 +69,6 @@ public class UserControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-        employee = Employee.builder()
-                .id(1L)
-                .user(user)
-                .cpf("12345678900")
-                .prisonCode("ABC123")
-                .educationLevel(EducationLevel.DOUTORADO_COMPLETO)
-                .dateOfBirth("1990, 5, 15")
-                .residenceLocation(new Location("Maceio", "Alagoas", "Vergel"))
-                .sentenceRegime(SentenceRegime.ABERTO)
-                .professionalExperience("5 years")
-                .areasOfInterest("Programming, Technology")
-                .skillsAndQualifications("Java, Spring Boot, SQL")
-                .educationalHistory("Bachelor's Degree in Computer Science")
-                .build();
     }
 
     @Test
