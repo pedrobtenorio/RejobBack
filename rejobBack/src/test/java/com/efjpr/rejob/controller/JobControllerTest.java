@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,10 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -42,6 +40,8 @@ public class JobControllerTest {
 
     private Job job;
 
+    private Long id = 1L;
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(jobController)
@@ -49,7 +49,7 @@ public class JobControllerTest {
                 .build();
 
         User user = User.builder()
-                .id(1L)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -62,7 +62,7 @@ public class JobControllerTest {
 
 
         Company company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.ONG)
                 .cnpj("12345678901234")
                 .businessActivity("Agricultura")
@@ -75,13 +75,20 @@ public class JobControllerTest {
                 .name("Company Name")
                 .build();
 
+        Collaborator collaborator = Collaborator.builder()
+                .id(id)
+                .user(user)
+                .jobTitle("Cozinheiro")
+                .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
+                .company(company)
+                .build();
 
         job = Job.builder()
-                .id(1L)
+                .id(id)
                 .companyLocation(new Location("Maceio", "Alagoas", "Jaragua"))
                 .jobType("Programador")
                 .categories("Júnior")
-                .contactPerson(new Collaborator())
+                .contactPerson(collaborator)
                 .jobTitle("Desenvolvedor Back-End")
                 .requirements("Conhecimentos básicos em Java e Springboot")
                 .jobDescription("Trabalhar em equipe no desenvolvimentos de sistemas")
@@ -103,34 +110,36 @@ public class JobControllerTest {
     @Test
     void testCreateJob() {
         JobCreate jobCreate = new JobCreate();
-        Job job1 = job;
+        when(jobService.createJob(jobCreate)).thenReturn(job);
 
-        ResponseEntity<Job> response = jobController.createJob(jobCreate);
+        ResponseEntity<Job> responseEntity = jobController.createJob(jobCreate);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(job1, response.getBody());
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(job, responseEntity.getBody());
+        verify(jobService, times(1)).createJob(jobCreate);
     }
 
     @Test
     void testGetAllJobs() {
-        JobResponse jobResponse = jobService.convertToJobResponse(job);
+        List<JobResponse> jobResponses = new ArrayList<>();
+        jobResponses.add(createJobResponse(1L, "Cabelereiro"));
+        jobResponses.add(createJobResponse(2L, "Motorista"));
+        when(jobService.getAllJobs()).thenReturn(jobResponses);
 
-        List<JobResponse> jobs = Arrays.asList(jobResponse);
+        ResponseEntity<List<JobResponse>> responseEntity = jobController.getAllJobs();
 
-        ResponseEntity<List<JobResponse>> response = jobController.getAllJobs();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(jobs, response.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(jobResponses, responseEntity.getBody());
+        verify(jobService, times(1)).getAllJobs();
     }
 
     @Test
     void testGetJobByCompanyId() {
-        Long companyId = 1L;
         List<Job> jobs = Arrays.asList(job, new Job());
 
-        when(jobService.getJobByCompanyId(companyId)).thenReturn(jobs);
+        when(jobService.getJobByCompanyId(id)).thenReturn(jobs);
 
-        ResponseEntity<List<Job>> response = jobController.getJobByCompanyId(companyId);
+        ResponseEntity<List<Job>> response = jobController.getJobByCompanyId(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(jobs, response.getBody());
@@ -138,8 +147,7 @@ public class JobControllerTest {
 
     @Test
     void testGetJobById() {
-        Long id = 1L;
-        JobResponse jobResponse = new JobResponse();
+        JobResponse jobResponse = createJobResponse(2L, "Pintor");
 
         when(jobService.getJobById(id)).thenReturn(jobResponse);
 
@@ -151,9 +159,8 @@ public class JobControllerTest {
 
     @Test
     void testUpdateJob() {
-        Long id = 1L;
         Job updatedJob = job;
-        updatedJob.setRequiredExperience("Nenhuma");
+        updatedJob.setJobType("Tesoureiro");
         updatedJob.setCompanyLocation(new Location("Recife", "Pernambuco", "Boa Viagem"));
 
         when(jobService.updateJob(id, updatedJob)).thenReturn(updatedJob);
@@ -166,13 +173,18 @@ public class JobControllerTest {
 
     @Test
     void testDeleteJob() {
-        Long id = 1L;
-        Job job1 = job;
 
         ResponseEntity<Void> response = jobController.deleteJob(id);
 
         verify(jobService).deleteJob(id);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    private JobResponse createJobResponse(Long id, String title) {
+        JobResponse jobResponse = new JobResponse();
+        jobResponse.setId(id);
+        jobResponse.setJobTitle(title);
+        return jobResponse;
     }
 
 }

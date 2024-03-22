@@ -58,7 +58,7 @@ public class UserControllerTest {
                 .build();
 
         user = User.builder()
-                .id(1L)
+                .id(userId)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -68,12 +68,13 @@ public class UserControllerTest {
                 .lastUpdatedDate(new Date(2000, Calendar.JANUARY, 1))
                 .profilePic("profile_pic_url")
                 .build();
-
     }
 
     @Test
     void testGetAllUsers() {
-        List<User> users = Arrays.asList(user, new User());
+        User user1 = user;
+        User user2 = new User(2L, "João Marcos", Role.COLLABORATOR, "joaomarcos@example.com", "senha123", "456-123-7890", new Date(2000, Calendar.JANUARY, 1), new Date(2000, Calendar.JANUARY, 1), "profile_pic_url");
+        List<User> users = Arrays.asList(user1, user2);
 
         when(userService.getAllUsers()).thenReturn(users);
 
@@ -85,7 +86,6 @@ public class UserControllerTest {
 
     @Test
     void testGetUser() {
-        User user1 = user;
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
 
@@ -100,7 +100,7 @@ public class UserControllerTest {
         User result = userController.getUser();
 
         // Verifica se o usuário retornado é o mesmo configurado
-        assertEquals(user1, result);
+        assertEquals(user, result);
     }
 
     @Test
@@ -155,14 +155,12 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() {
-        Long id = 1L;
         User updatedUser = user;
-        updatedUser.setId(id);
         updatedUser.setPhoneNumber("098-765-4321");
 
-        when(userService.updateUser(id, updatedUser)).thenReturn(updatedUser);
+        when(userService.updateUser(userId, updatedUser)).thenReturn(updatedUser);
 
-        ResponseEntity<User> response = userController.updateUser(id, updatedUser);
+        ResponseEntity<User> response = userController.updateUser(userId, updatedUser);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedUser, response.getBody());
@@ -170,13 +168,10 @@ public class UserControllerTest {
 
     @Test
     void testDeleteUser() {
-        Long id = 1L;
-        User user1 = user;
-        user1.setId(id);
 
-        ResponseEntity<Void> response = userController.deleteUser(id);
+        ResponseEntity<Void> response = userController.deleteUser(userId);
 
-        verify(userService).deleteUser(id);
+        verify(userService).deleteUser(userId);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 

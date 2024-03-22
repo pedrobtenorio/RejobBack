@@ -39,13 +39,18 @@ public class CompanyControllerTest {
     @InjectMocks
     private CompanyController companyController;
 
+    @InjectMocks
     private CollaboratorService collaboratorService;
 
     MockMvc mockMvc;
 
+    private User user;
+
     private Company company;
 
     private Collaborator collaborator;
+
+    private Long id = 1L;
 
     @BeforeEach
     public void setUp() {
@@ -53,8 +58,8 @@ public class CompanyControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        User user = User.builder()
-                .id(1L)
+        user = User.builder()
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -65,9 +70,8 @@ public class CompanyControllerTest {
                 .profilePic("profile_pic_url")
                 .build();
 
-
         company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Lanchonete")
@@ -80,7 +84,8 @@ public class CompanyControllerTest {
                 .name("Passaporte do Alemão")
                 .build();
 
-        Collaborator collaborator = Collaborator.builder()
+        collaborator = Collaborator.builder()
+                .id(id)
                 .user(user)
                 .jobTitle("Cozinheiro")
                 .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
@@ -91,54 +96,51 @@ public class CompanyControllerTest {
 
     @Test
     void testGetCompanyById() {
-        Long companyId = 1L;
-        Company company1 = company;
-        company1.setId(companyId);
 
-        when(companyService.getCompanyById(companyId)).thenReturn(company1);
+        when(companyService.getCompanyById(id)).thenReturn(company);
 
-        ResponseEntity<Company> response = companyController.getCompanyById(companyId);
+        ResponseEntity<Company> response = companyController.getCompanyById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company1, response.getBody());
+        assertEquals(company, response.getBody());
     }
 
     @Test
     void testGetCompanyByCollaboratorId() {
-        Long collaboratorId = 1L;
-        Company company1 = company;
 
-        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company1);
+        when(companyService.getCompanyByCollaboratorId(id)).thenReturn(company);
 
-        ResponseEntity<Company> response = companyController.getCompanyByCollaboratorId(collaboratorId);
+        ResponseEntity<Company> response = companyController.getCompanyByCollaboratorId(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(company1, response.getBody());
+        assertEquals(company, response.getBody());
     }
 
     @Test
     void testGetCollaboratorListFromSameCompany() {
-        Long collaboratorId = 1L;
-        Company company1 = company;
+        User user2 = new User(2L, "João Marcos", Role.COLLABORATOR, "joaomarcos@example.com", "senha123", "456-123-7890", new Date(2000, Calendar.JANUARY, 1), new Date(2000, Calendar.JANUARY, 1), "profile_pic_url");
+        Collaborator collaborator1 = collaborator;
+        Collaborator collaborator2 = new Collaborator(2L, user2, "Zelador", CollaboratorType.ONG, company);
 
-        when(companyService.getCompanyByCollaboratorId(collaboratorId)).thenReturn(company1);
+        List<Collaborator> collaborators = Arrays.asList(collaborator1, collaborator2);
 
-        ResponseEntity<List<Collaborator>> response = companyController.getCollaboratorListFromSameCompany(collaboratorId);
+        when(companyService.getCompanyByCollaboratorId(id)).thenReturn(company);
+
+        ResponseEntity<List<Collaborator>> response = companyController.getCollaboratorListFromSameCompany(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testUpdateCompany() {
-        Long companyId = 1L;
         Company updatedCompany = company;
         updatedCompany.setName("Passaporte do Gaúcho");
         updatedCompany.setNumberOfEmployees(15);
         updatedCompany.setCompanyType(CompanyType.ONG);
 
-        when(companyService.updateCompany(companyId, updatedCompany)).thenReturn(updatedCompany);
+        when(companyService.updateCompany(id, updatedCompany)).thenReturn(updatedCompany);
 
-        ResponseEntity<Company> response = companyController.updateCompany(companyId, updatedCompany);
+        ResponseEntity<Company> response = companyController.updateCompany(id, updatedCompany);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedCompany, response.getBody());
@@ -146,12 +148,10 @@ public class CompanyControllerTest {
 
     @Test
     void testDeleteCompany() {
-        Long companyId = 1L;
-        Company company1 = company;
 
-        ResponseEntity<Void> response = companyController.deleteCompany(companyId);
+        ResponseEntity<Void> response = companyController.deleteCompany(id);
 
-        verify(companyService).deleteCompany(companyId);
+        verify(companyService).deleteCompany(id);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
