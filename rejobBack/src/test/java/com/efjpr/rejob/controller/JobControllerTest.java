@@ -105,8 +105,6 @@ public class JobControllerTest {
         JobCreate jobCreate = new JobCreate();
         Job job1 = job;
 
-        when(jobService.createJob(jobCreate)).thenReturn(job1);
-
         ResponseEntity<Job> response = jobController.createJob(jobCreate);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -115,9 +113,9 @@ public class JobControllerTest {
 
     @Test
     void testGetAllJobs() {
-        List<JobResponse> jobs = Arrays.asList(new JobResponse(), new JobResponse());
+        JobResponse jobResponse = jobService.convertToJobResponse(job);
 
-        when(jobService.getAllJobs()).thenReturn(jobs);
+        List<JobResponse> jobs = Arrays.asList(jobResponse);
 
         ResponseEntity<List<JobResponse>> response = jobController.getAllJobs();
 
