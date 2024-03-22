@@ -57,3 +57,5 @@ databaseChangeLog:
       file: db/changelog/0000000026_add_similarity.sql
   - include:
       file: db/changelog/0000000027_alter_job.sql
+  - include:
+      file: db/changelog/0000000028_alter_company.sql
