@@ -44,8 +44,8 @@ public class AuthService {
         collaboratorService.create(request, user);
 
         // funçao de enviar e-mail de boas-vindas para Colaborador
-        Context context = new Context();
-        emailService.sendEmailWithHtmlTemplate(user.getEmail(), "Boas-Vindas", "bemvindo_colaborador.html", context);
+        // Context context = new Context();
+        // emailService.sendEmailWithHtmlTemplate(user.getEmail(), "Boas-Vindas", "bemvindo_colaborador.html", context);
 
         return AuthResponse.builder()
                 .token(token)
@@ -73,8 +73,8 @@ public class AuthService {
         employeeService.create(request, user);
 
         // funçao de enviar e-mail de boas-vindas para Empregado
-        Context context = new Context();
-        emailService.sendEmailWithHtmlTemplate(user.getEmail(), "Boas-Vindas", "bemvindo_empregado.html", context);
+        // Context context = new Context();
+        // emailService.sendEmailWithHtmlTemplate(user.getEmail(), "Boas-Vindas", "bemvindo_empregado.html", context);
 
         return AuthResponse.builder()
                 .token(token)

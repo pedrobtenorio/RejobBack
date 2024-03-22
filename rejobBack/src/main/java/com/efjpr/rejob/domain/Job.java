@@ -37,6 +37,7 @@ public class Job {
     private SalaryRange salaryRange;
     private String responsibilities;
     private String requiredExperience;
+    private Boolean hasNewApplicant = false;
 
     @Enumerated(EnumType.STRING)
     private EducationLevel educationLevel;

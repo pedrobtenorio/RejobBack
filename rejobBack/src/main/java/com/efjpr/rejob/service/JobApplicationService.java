@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,22 +21,32 @@ public class JobApplicationService {
     private final JobApplicationRepository jobApplicationRepository;
     private final EmployeeService employeeService;
     private final JobService jobService;
+    private final JobRecommendationService jobRecommendationService;
 
     @Autowired
-    public JobApplicationService(JobApplicationRepository jobApplicationRepository, EmployeeService employeeService, JobService jobService) {
+    public JobApplicationService(JobApplicationRepository jobApplicationRepository, EmployeeService employeeService, JobService jobService, JobRecommendationService jobRecommendationService) {
         this.jobApplicationRepository = jobApplicationRepository;
         this.employeeService = employeeService;
         this.jobService = jobService;
+        this.jobRecommendationService = jobRecommendationService;
     }
 
 
     public JobApplication saveJobApplication(JobApplicationRequest jobApplicationRequest) {
         Employee applicant = employeeService.findById(jobApplicationRequest.getApplicantId());
         Job job = jobService.findById(jobApplicationRequest.getJobId());
+        jobService.updateHasNewApplicant(job, true);
+        double score = jobRecommendationService.similarity(applicant, job);
         if (applicationExists(applicant, job)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Already applied");
         }
-        JobApplication jobApplication = JobApplication.builder().applicant(applicant).job(job).applicationDate(Date.from(Instant.now())).status(jobApplicationRequest.getStatus()).feedback(jobApplicationRequest.getFeedback()).build();
+        JobApplication jobApplication = JobApplication.builder()
+                .applicant(applicant)
+                .job(job).applicationDate(Date.from(Instant.now()))
+                .status(jobApplicationRequest.getStatus())
+                .feedback(jobApplicationRequest.getFeedback())
+                .similarity(score)
+                .build();
 
         return jobApplicationRepository.save(jobApplication);
     }
@@ -85,7 +92,11 @@ public class JobApplicationService {
         if (jobId == null) {
             return Collections.emptyList();
         }
-        return jobApplicationRepository.findAllByJobId(jobId);
+        List<JobApplication> jobApplications = jobApplicationRepository.findAllByJobId(jobId);
+
+        return jobApplications.stream()
+                .sorted(Comparator.comparing(JobApplication::getSimilarity).reversed())
+                .collect(Collectors.toList());
     }
 
     public List<Employee> findApplicantsByJobId(Long jobId) {

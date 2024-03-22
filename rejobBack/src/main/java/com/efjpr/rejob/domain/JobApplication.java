@@ -34,5 +34,6 @@ public class JobApplication {
 
     private String feedback;
 
+    private Double similarity;
 
 }
