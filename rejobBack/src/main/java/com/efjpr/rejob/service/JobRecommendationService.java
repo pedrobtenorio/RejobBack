@@ -27,10 +27,11 @@ public class JobRecommendationService {
 
         List<Job> allJobs = jobRepository.findOpenJobs();
         allJobs.removeIf(appliedJobs::contains);
-
+        String employeeExperienceAndSkills = employee.getProfessionalExperience() + " " + employee.getSkillsAndQualifications();
         Map<Job, Double> jobSimilarities = new HashMap<>();
         for (Job job : allJobs) {
-            double similarity = calculateJaccardSimilarity(employee.getProfessionalExperience(), job.getRequiredExperience());
+            String jobExperienceAndResponsibilities = job.getRequiredExperience() + " " + job.getResponsibilities();
+            double similarity = calculateJaccardSimilarity(employeeExperienceAndSkills, jobExperienceAndResponsibilities);
             jobSimilarities.put(job, similarity);
         }
 
