@@ -1,9 +1,7 @@
 package com.efjpr.rejob.controller;
 
 import com.efjpr.rejob.domain.*;
-import com.efjpr.rejob.domain.Enums.EducationLevel;
-import com.efjpr.rejob.domain.Enums.Role;
-import com.efjpr.rejob.domain.Enums.SentenceRegime;
+import com.efjpr.rejob.domain.Enums.*;
 import com.efjpr.rejob.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,9 +45,15 @@ public class UserControllerTest {
 
     MockMvc mockMvc;
 
-    private Long userId = 1L;
-
     private User user;
+
+    private Company company;
+
+    private Collaborator collaborator;
+
+    private Employee employee;
+
+    private Long id = 1L;
 
     @BeforeEach
     public void setUp() {
@@ -58,7 +62,7 @@ public class UserControllerTest {
                 .build();
 
         user = User.builder()
-                .id(userId)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -67,6 +71,43 @@ public class UserControllerTest {
                 .createdDate(new Date(2000, Calendar.JANUARY, 1))
                 .lastUpdatedDate(new Date(2000, Calendar.JANUARY, 1))
                 .profilePic("profile_pic_url")
+                .build();
+
+        company = Company.builder()
+                .id(id)
+                .companyType(CompanyType.ONG)
+                .cnpj("12345678901234")
+                .businessActivity("Agricultura")
+                .phone("123-456-7890")
+                .email("company@example.com")
+                .institutionalDescription("Agricultura ambientalmente responsável")
+                .numberOfEmployees(100)
+                .user(user)
+                .headquarters(new Location("Maceio", "Alagoas", "Vergel"))
+                .name("Verde Cultura")
+                .build();
+
+        collaborator = Collaborator.builder()
+                .id(id)
+                .user(user)
+                .jobTitle("Cozinheiro")
+                .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
+                .company(company)
+                .build();
+
+        employee = Employee.builder()
+                .id(id)
+                .user(user)
+                .cpf("12345678900")
+                .prisonCode("ABC123")
+                .educationLevel(EducationLevel.DOUTORADO_COMPLETO)
+                .dateOfBirth("1990, 5, 15")
+                .residenceLocation(new Location("Maceio", "Alagoas", "Vergel"))
+                .sentenceRegime(SentenceRegime.ABERTO)
+                .professionalExperience("5 years")
+                .areasOfInterest("Programming, Technology")
+                .skillsAndQualifications("Java, Spring Boot, SQL")
+                .educationalHistory("Bachelor's Degree in Computer Science")
                 .build();
     }
 
@@ -118,39 +159,36 @@ public class UserControllerTest {
 
 
     @Test
-    public void testGetEmployeeByUserId() throws Exception {
+    public void testGetEmployeeByUserId() {
 
-        mockMvc.perform(get("/api/v1/users/{id}/employee", userId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+        when(userService.getEmployee(id)).thenReturn(employee);
 
-        verify(userService).getEmployee(userId);
-        verifyNoMoreInteractions(userService);
+        ResponseEntity<Employee> response = userController.getEmployeeByUserId(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(employee, response.getBody());
     }
 
     @Test
-    public void testGetCompanyByUserId() throws Exception {
+    public void testGetCompanyByUserId() {
 
-        mockMvc.perform(get("/api/v1/users/{id}/company", userId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+        when(userService.getCompany(id)).thenReturn(company);
 
-        verify(userService).getCompany(userId);
-        verifyNoMoreInteractions(userService);
+        ResponseEntity<Company> response = userController.getCompanyByUserId(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(company, response.getBody());
     }
 
     @Test
-    public void testGetCollaboratorById() throws Exception {
+    public void testGetCollaboratorByUserId() {
 
-        mockMvc.perform(get("/api/v1/users/{id}/collaborator", userId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+        when(userService.getCollaborator(id)).thenReturn(collaborator);
 
-        verify(userService).getCollaborator(userId);
-        verifyNoMoreInteractions(userService);
+        ResponseEntity<Collaborator> response = userController.getCollaboratorByUserId(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(collaborator, response.getBody());
     }
 
     @Test
@@ -158,9 +196,9 @@ public class UserControllerTest {
         User updatedUser = user;
         updatedUser.setPhoneNumber("098-765-4321");
 
-        when(userService.updateUser(userId, updatedUser)).thenReturn(updatedUser);
+        when(userService.updateUser(id, updatedUser)).thenReturn(updatedUser);
 
-        ResponseEntity<User> response = userController.updateUser(userId, updatedUser);
+        ResponseEntity<User> response = userController.updateUser(id, updatedUser);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedUser, response.getBody());
@@ -169,9 +207,9 @@ public class UserControllerTest {
     @Test
     void testDeleteUser() {
 
-        ResponseEntity<Void> response = userController.deleteUser(userId);
+        ResponseEntity<Void> response = userController.deleteUser(id);
 
-        verify(userService).deleteUser(userId);
+        verify(userService).deleteUser(id);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
