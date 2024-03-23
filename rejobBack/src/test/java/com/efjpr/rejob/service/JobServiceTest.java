@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,9 +27,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JobServiceTest {
 
-    private final JobRepository jobRepository = mock(JobRepository.class);
-    private final CollaboratorRepository collaboratorRepository = mock(CollaboratorRepository.class);
-    private final JobService jobService = new JobService(jobRepository, collaboratorRepository);
+    @InjectMocks
+    JobService jobService;
+
+    @Mock
+    JobRepository jobRepository;
+
+    @Mock
+    CollaboratorRepository collaboratorRepository;
 
     private Job job;
 
@@ -38,10 +44,12 @@ class JobServiceTest {
 
     private User user;
 
+    private Long id = 1L;
+
     @BeforeEach
     public void setUp() {
         job = Job.builder()
-                .id(1L)
+                .id(id)
                 .companyLocation(new Location("Maceio", "Alagoas", "Jaragua"))
                 .jobType("Job Type")
                 .categories("Category1")
@@ -63,7 +71,7 @@ class JobServiceTest {
                 .build();
 
         user = User.builder()
-                .id(1L)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -75,7 +83,7 @@ class JobServiceTest {
                 .build();
 
         company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Lanchonete")
@@ -89,7 +97,7 @@ class JobServiceTest {
                 .build();
 
         collaborator = Collaborator.builder()
-                .id(1L)
+                .id(id)
                 .user(user)
                 .jobTitle("Cozinheiro")
                 .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
@@ -121,7 +129,11 @@ class JobServiceTest {
     @Test
     void testCreateJob() {
         JobCreate jobCreate = new JobCreate();
-        jobCreate.setContactPersonId(1L);
+        jobCreate.setId(id);
+        jobCreate.setCompanyLocation(new Location("Maceio", "Alagoas", "Jaragua"));
+        jobCreate.setJobType("TI");
+        jobCreate.setContactPersonId(id);
+        jobCreate.setJobTitle("Engenheiro de Software");
 
         Collaborator contactPerson = collaborator;
         when(collaboratorRepository.findById(jobCreate.getContactPersonId())).thenReturn(Optional.of(contactPerson));
@@ -138,33 +150,32 @@ class JobServiceTest {
         Job job1 = job;
         job.setContactPerson(contactPerson);
 
-        when(jobRepository.findById(1L)).thenReturn(Optional.of(job1));
+        when(jobRepository.findById(id)).thenReturn(Optional.of(job1));
 
-        JobResponse jobResponse = jobService.getJobById(1L);
+        JobResponse jobResponse = jobService.getJobById(id);
 
         assertEquals(job1.getId(), jobResponse.getId());
     }
 
     @Test
     void testGetJobByIdNotFound() {
-        when(jobRepository.findById(1L)).thenReturn(Optional.empty());
+        when(jobRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> jobService.getJobById(1L));
+        assertThrows(ResponseStatusException.class, () -> jobService.getJobById(id));
     }
 
     @Test
     void testUpdateJob() {
-        Long id = 1L;
         Job updatedJob = job;
-        updatedJob.setId(id);
+        updatedJob.setJobType("Marcenaria");
         updatedJob.setJobTitle("Marceneiro");
         updatedJob.setJobDescription("Trabalhar com marcenaria");
         updatedJob.setEducationLevel(EducationLevel.ENSINO_FUNDAMENTAL_COMPLETO);
 
-        when(jobRepository.findById(1L)).thenReturn(Optional.of(updatedJob));
+        when(jobRepository.findById(id)).thenReturn(Optional.of(updatedJob));
         when(jobRepository.save(updatedJob)).thenReturn(updatedJob);
 
-        Job result = jobService.updateJob(1L, updatedJob);
+        Job result = jobService.updateJob(id, updatedJob);
 
         verify(jobRepository, times(1)).save(updatedJob);
         assertEquals(updatedJob.getJobTitle(), result.getJobTitle());

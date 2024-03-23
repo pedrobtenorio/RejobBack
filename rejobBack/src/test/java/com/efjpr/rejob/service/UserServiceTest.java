@@ -43,10 +43,12 @@ public class UserServiceTest {
 
     private Employee employee;
 
+    private Long id = 1L;
+
     @BeforeEach
     public void setUp() {
         user = User.builder()
-                .id(1L)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -58,7 +60,7 @@ public class UserServiceTest {
                 .build();
 
         company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Lanchonete")
@@ -72,7 +74,7 @@ public class UserServiceTest {
                 .build();
 
         collaborator = Collaborator.builder()
-                .id(1L)
+                .id(id)
                 .user(user)
                 .jobTitle("Cozinheiro")
                 .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
@@ -80,7 +82,7 @@ public class UserServiceTest {
                 .build();
 
         employee = Employee.builder()
-                .id(1L)
+                .id(id)
                 .user(user)
                 .cpf("12345678900")
                 .prisonCode("ABC123")
@@ -108,10 +110,8 @@ public class UserServiceTest {
 
     @Test
     void testGetUserById() {
-        Long id = 1L;
-        User user1 = user;
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
         User result = userService.getUserById(id);
 
@@ -120,7 +120,6 @@ public class UserServiceTest {
 
     @Test
     void testGetCollaborator() {
-        Long id = 1L;
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(collaboratorService.findByUser(user)).thenReturn(collaborator);
@@ -132,7 +131,6 @@ public class UserServiceTest {
 
     @Test
     void testGetEmployee() {
-        Long id = 1L;
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(employeeService.findByUser(user)).thenReturn(employee);
@@ -144,7 +142,6 @@ public class UserServiceTest {
 
     @Test
     void testGetCompany() {
-        Long id = 1L;
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(companyService.findByUser(user)).thenReturn(company);
@@ -156,9 +153,7 @@ public class UserServiceTest {
 
     @Test
     void testUpdateUser() {
-        Long id = 1L;
         User updatedUser = user;
-        updatedUser.setId(id);
         updatedUser.setPhoneNumber("321-654-987");
 
         when(userRepository.findById(id)).thenReturn(Optional.of(updatedUser));
@@ -171,7 +166,6 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser() {
-        Long id = 1L;
         User existingUser = user;
 
         when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
