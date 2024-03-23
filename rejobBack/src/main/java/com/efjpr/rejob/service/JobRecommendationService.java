@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -22,28 +23,6 @@ public class JobRecommendationService {
 
     private final JobRepository jobRepository;
     private final JobApplicationRepository jobApplicationRepository;
-    public List<Job> getBestJobs(Employee employee) {
-        List<Job> appliedJobs = jobApplicationRepository.findAllByApplicant(employee).stream().map(JobApplication::getJob).toList();
-
-        List<Job> allJobs = jobRepository.findOpenJobs();
-        allJobs.removeIf(appliedJobs::contains);
-        String employeeExperienceAndSkills = employee.getProfessionalExperience() + " " + employee.getSkillsAndQualifications();
-        Map<Job, Double> jobSimilarities = new HashMap<>();
-        for (Job job : allJobs) {
-            String jobExperienceAndResponsibilities = job.getRequiredExperience() + " " + job.getResponsibilities();
-            double similarity = calculateJaccardSimilarity(employeeExperienceAndSkills, jobExperienceAndResponsibilities);
-            jobSimilarities.put(job, similarity);
-        }
-
-        List<Job> recommendedJobs = new ArrayList<>(allJobs);
-        recommendedJobs.sort((job1, job2) -> Double.compare(jobSimilarities.get(job2), jobSimilarities.get(job1)));
-
-        return recommendedJobs.subList(0, Math.min(recommendedJobs.size(), 4));
-    }
-
-    public double similarity(Employee employee, Job job) {
-        return calculateJaccardSimilarity(employee.getProfessionalExperience(), job.getRequiredExperience());
-    }
 
     private static double calculateJaccardSimilarity(String str1, String str2) {
         Set<String> set1 = tokenizeAndStem(removeStopwords(str1));
@@ -89,6 +68,33 @@ public class JobRecommendationService {
         return text.trim();
     }
 
+    public List<Job> getBestJobs(Employee employee) {
+        List<Job> appliedJobs = jobApplicationRepository.findAllByApplicant(employee).stream().map(JobApplication::getJob).toList();
+
+        List<Job> allJobs = jobRepository.findOpenJobs();
+        allJobs.removeAll(appliedJobs);
+
+        String employeeExperienceAndSkills = preprocessText(employee.getProfessionalExperience() + " " + employee.getSkillsAndQualifications());
+
+        Map<Job, Double> jobSimilarities = new HashMap<>();
+        for (Job job : allJobs) {
+            String jobExperienceAndResponsibilities = preprocessText(job.getRequiredExperience() + " " + job.getResponsibilities());
+            double similarity = calculateJaccardSimilarity(employeeExperienceAndSkills, jobExperienceAndResponsibilities);
+            jobSimilarities.put(job, similarity);
+        }
+
+        return jobSimilarities.entrySet().stream().sorted(Map.Entry.<Job, Double>comparingByValue().reversed()).map(Map.Entry::getKey).collect(Collectors.toList());
+    }
+
+    public double similarity(Employee employee, Job job) {
+        String jobExperienceAndResponsibilities = preprocessText(job.getRequiredExperience() + " " + job.getResponsibilities());
+        String employeeExperienceAndSkills = preprocessText(employee.getProfessionalExperience() + " " + employee.getSkillsAndQualifications());
+        return calculateJaccardSimilarity(preprocessText(employeeExperienceAndSkills), preprocessText(jobExperienceAndResponsibilities));
+    }
+
+    private String preprocessText(String text) {
+        return text.replace("\n", " ");
+    }
 
 
 }
