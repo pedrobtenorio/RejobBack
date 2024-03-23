@@ -36,10 +36,12 @@ class CollaboratorServiceTest {
 
     private Collaborator collaborator;
 
+    private Long id = 1L;
+
     @BeforeEach
     public void setUp() {
         user = User.builder()
-                .id(1L)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -51,7 +53,7 @@ class CollaboratorServiceTest {
                 .build();
 
         company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Lanchonete")
@@ -65,7 +67,7 @@ class CollaboratorServiceTest {
                 .build();
 
         collaborator = Collaborator.builder()
-                .id(1L)
+                .id(id)
                 .user(user)
                 .jobTitle("Cozinheiro")
                 .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
@@ -77,15 +79,15 @@ class CollaboratorServiceTest {
     @Test
     void testCreateCollaborator() {
         CollaboratorRegisterRequest request = new CollaboratorRegisterRequest();
-        request.setCompanyId(1L);
+        request.setName("Gilvan");
+        request.setEmail("gilvanvendas@example.com");
         request.setJobTitle("Vendedor");
         request.setCollaboratorType(ONG);
-
-        User newUser = user;
+        request.setCompanyId(id);
 
         when(companyService.getCompanyById(1L)).thenReturn(company);
 
-        collaboratorService.create(request, newUser);
+        collaboratorService.create(request, user);
 
         verify(collaboratorRepository, times(1)).save(any());
         verify(companyService, times(1)).setUserToCompany(any(), any());
@@ -93,24 +95,20 @@ class CollaboratorServiceTest {
 
     @Test
     void testFindById() {
-        Collaborator collaborator1 = collaborator;
-        when(collaboratorRepository.findById(1L)).thenReturn(java.util.Optional.of(collaborator));
+        when(collaboratorRepository.findById(id)).thenReturn(java.util.Optional.of(collaborator));
 
-        Collaborator result = collaboratorService.findById(1L);
+        Collaborator result = collaboratorService.findById(id);
 
-        assertEquals(collaborator1, result);
+        assertEquals(collaborator, result);
     }
 
     @Test
     void testFindByUser() {
-        User user1 = user;
-        Collaborator collaborator1 = collaborator;
-        collaborator.setUser(user1);
 
         when(collaboratorRepository.findByUser(user)).thenReturn(java.util.Optional.of(collaborator));
 
         Collaborator result = collaboratorService.findByUser(user);
 
-        assertEquals(collaborator1, result);
+        assertEquals(collaborator, result);
     }
 }
