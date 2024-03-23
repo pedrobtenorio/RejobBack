@@ -75,29 +75,25 @@ class EmployeeServiceTest {
     @Test
     void testCreateEmployee() {
         EmployeeRegisterRequest request = new EmployeeRegisterRequest();
+        request.setName("João");
+        request.setPassword("senha123");
         request.setCpf("12345678900");
-
-        User newUser = user;
 
         when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        employeeService.create(request, newUser);
+        employeeService.create(request, user);
 
         verify(employeeRepository, times(1)).save(any(Employee.class));
     }
 
     @Test
     void testFindEmployeeByUser() {
-        User user1 = user;
-
-        Employee employee1 = employee;
-        employee.setUser(user1);
 
         when(employeeRepository.findByUser(user)).thenReturn(Optional.of(employee));
 
         Employee foundEmployee = employeeService.findByUser(user);
 
-        assertEquals(employee1, foundEmployee);
+        assertEquals(employee, foundEmployee);
     }
 
     @Test

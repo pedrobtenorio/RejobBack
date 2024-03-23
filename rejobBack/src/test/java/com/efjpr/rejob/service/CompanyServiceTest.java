@@ -53,6 +53,8 @@ class CompanyServiceTest {
 
     private Collaborator collaborator;
 
+    private Long id = 1L;
+
     public CompanyServiceTest() {
         MockitoAnnotations.openMocks(this);
     }
@@ -64,7 +66,7 @@ class CompanyServiceTest {
                 .build();
 
         user = User.builder()
-                .id(1L)
+                .id(id)
                 .name("John Doe")
                 .role(Role.USER)
                 .email("johndoe@example.com")
@@ -76,7 +78,7 @@ class CompanyServiceTest {
                 .build();
 
         company = Company.builder()
-                .id(1L)
+                .id(id)
                 .companyType(CompanyType.EMPRESA_COMERCIAL)
                 .cnpj("12345678901234")
                 .businessActivity("Agricultura")
@@ -90,7 +92,7 @@ class CompanyServiceTest {
                 .build();
 
         collaborator = Collaborator.builder()
-                .id(1L)
+                .id(id)
                 .user(user)
                 .jobTitle("Cozinheiro")
                 .collaboratorType(CollaboratorType.PRIVATE_ENTERPRISE)
@@ -102,39 +104,36 @@ class CompanyServiceTest {
     @Test
     void testCreateCompany() {
         CompanyRegisterRequest request = new CompanyRegisterRequest();
-        Company expectedCompany = company;
-        expectedCompany.setUser(user);
+        request.setName("Distribuidora Guimarães");
+        request.setCompanyType(CompanyType.ONG);
+        request.setCnpj("11111111111111");
+        request.setBusinessActivity("Logística");
 
-        when(companyRepository.save(any(Company.class))).thenReturn(expectedCompany);
+        when(companyRepository.save(any(Company.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Company company = companyService.create(request, user);
+        companyService.create(request, user);
 
         verify(companyRepository, times(1)).save(any(Company.class));
-        assertEquals(user, company.getUser());
     }
 
 
     @Test
     void testGetCompanyById() {
-        Company company1 = company;
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        when(companyRepository.findById(id)).thenReturn(Optional.of(company));
 
-        Company result = companyService.getCompanyById(1L);
+        Company result = companyService.getCompanyById(id);
 
-        assertEquals(company1, result);
+        assertEquals(company, result);
     }
 
     @Test
     void testFindByUser() {
-        User user1 = user;
-        Company company1 = company;
-        company.setUser(user1);
 
         when(companyRepository.findByUser(user)).thenReturn(Optional.of(company));
 
         Company result = companyService.findByUser(user);
 
-        assertEquals(company1, result);
+        assertEquals(company, result);
     }
 
     @Test
@@ -150,12 +149,12 @@ class CompanyServiceTest {
     @Test
     void testUpdateCompany() {
         Company updatedCompany = company;
-        updatedCompany.setName("Updated Company Name");
+        updatedCompany.setName("Sanduba do Ricardo");
 
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(updatedCompany));
+        when(companyRepository.findById(id)).thenReturn(Optional.of(updatedCompany));
         when(companyRepository.save(updatedCompany)).thenReturn(updatedCompany);
 
-        Company result = companyService.updateCompany(1L, updatedCompany);
+        Company result = companyService.updateCompany(id, updatedCompany);
 
         assertEquals(updatedCompany.getName(), result.getName());
     }
@@ -171,12 +170,11 @@ class CompanyServiceTest {
 
     @Test
     void testDeleteCompany() {
-        Company companyToDelete = company;
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(companyToDelete));
+        when(companyRepository.findById(id)).thenReturn(Optional.of(company));
 
-        companyService.deleteCompany(1L);
+        companyService.deleteCompany(id);
 
-        verify(companyRepository, times(1)).delete(companyToDelete);
+        verify(companyRepository, times(1)).delete(company);
     }
 
     @Test
@@ -188,10 +186,9 @@ class CompanyServiceTest {
 
     @Test
     void testGetCompanyByCollaboratorId() {
-        Collaborator collaborator1 = collaborator;
         collaborator.setCompany(company);
 
-        when(collaboratorRepository.findById(1L)).thenReturn(Optional.of(collaborator1));
+        when(collaboratorRepository.findById(1L)).thenReturn(Optional.of(collaborator));
 
         Company result = companyService.getCompanyByCollaboratorId(1L);
 

@@ -192,13 +192,12 @@ class JobServiceTest {
 
     @Test
     void testDeleteJob() {
-        Job existingJob = job;
 
-        when(jobRepository.findById(1L)).thenReturn(Optional.of(existingJob));
+        when(jobRepository.findById(id)).thenReturn(Optional.of(job));
 
-        jobService.deleteJob(1L);
+        jobService.deleteJob(id);
 
-        verify(jobRepository, times(1)).delete(existingJob);
+        verify(jobRepository, times(1)).delete(job);
     }
 
     @Test
