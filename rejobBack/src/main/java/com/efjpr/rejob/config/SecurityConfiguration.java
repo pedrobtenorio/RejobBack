@@ -50,7 +50,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/companies").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/courses/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**", "/error").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/error",
+                                "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
