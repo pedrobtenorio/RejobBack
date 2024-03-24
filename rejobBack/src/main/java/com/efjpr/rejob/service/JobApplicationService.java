@@ -80,6 +80,7 @@ public class JobApplicationService {
         JobApplication jobApplication = findByApplicantAndJob(employeeId, jobId);
         jobApplication.setStatus(status);
         jobApplication.setFeedback(feedback);
+        jobApplication.setSimilarity(jobApplication.getSimilarity());
         return jobApplicationRepository.save(jobApplication);
     }
 
