@@ -140,7 +140,7 @@ public class JobService {
                 .build();
     }
 
-    private JobResponse convertToJobResponse(Job job) {
+    public JobResponse convertToJobResponse(Job job) {
         JobResponse jobResponse = new JobResponse();
         jobResponse.setId(job.getId());
         jobResponse.setCompanyLocation(job.getCompanyLocation());
