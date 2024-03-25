@@ -62,9 +62,9 @@ public class UserController {
         }
     }
 
-    @Operation(description = "Retorna funcionário pelo seu id")
+    @Operation(description = "Retorna egresso pelo seu id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Funcionário retornado com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Egresso retornado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
     @GetMapping("/{userId}/employee")

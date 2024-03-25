@@ -64,7 +64,7 @@ public class JobApplicationController {
 
     @Operation(description = "Retorna todas aplicações de vagas de um egresso")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Aplicações de vagas retornadas com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Aplicações de vagas do egresso retornadas com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
     @GetMapping("my-applications/{employeeId}")
