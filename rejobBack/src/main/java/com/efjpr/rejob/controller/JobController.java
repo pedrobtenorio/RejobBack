@@ -71,7 +71,7 @@ public class JobController {
 
     @Operation(description = "Retorna todas as vagas associadas a um colaborador")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Vagas associadas a colaborador retornadas com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Vagas retornadas com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
     @GetMapping("job-by-collaborator/{collaboratorId}")
