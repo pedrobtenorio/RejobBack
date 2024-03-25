@@ -7,6 +7,9 @@ import com.efjpr.rejob.domain.Dto.StatusRequest;
 import com.efjpr.rejob.domain.Enums.JobStatus;
 import com.efjpr.rejob.domain.Job;
 import com.efjpr.rejob.service.JobService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,12 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
+    @Operation(description = "Cria uma vaga de emprego")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vaga criada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Colaborador com esse id não foi encontrado"),
+            @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
+    })
     @PostMapping
     public ResponseEntity<Job> createJob(@RequestBody JobCreate job) {
         return new ResponseEntity<>(jobService.createJob(job), HttpStatus.CREATED);
