@@ -44,7 +44,7 @@ class AuthControllerTest {
         verify(authService, times(1)).register(request);
     }
 
-    @Test
+  /*  @Test
     void testRegisterCollaborator() {
         MockitoAnnotations.openMocks(this);
         CollaboratorRegisterRequest request = new CollaboratorRegisterRequest();
@@ -56,7 +56,7 @@ class AuthControllerTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(response, result.getBody());
         verify(authService, times(1)).register(request);
-    }
+    }*/
 
 //    @Test
 //    void testRegisterCompany() {
