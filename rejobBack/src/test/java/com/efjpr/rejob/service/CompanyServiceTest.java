@@ -79,7 +79,7 @@ class CompanyServiceTest {
 
         company = Company.builder()
                 .id(id)
-                .companyType(CompanyType.EMPRESA_COMERCIAL)
+                .companyType(CompanyType.PRIVATE_ENTERPRISE)
                 .cnpj("12345678901234")
                 .businessActivity("Agricultura")
                 .phone("123-456-7890")
@@ -216,7 +216,7 @@ class CompanyServiceTest {
     void testGetAllCompanies() {
         Company company1 = company;
 
-        Company company2 = new Company(2L, "22222222222222", "Secos e Frios", "Mercado", 50, new Location("Maceio", "Alagoas", "Benedito Bentes"), "222-222-2222", "Mercado especializado em secos, queijos e vinhos", "company@example.com", CompanyType.EMPRESA_COMERCIAL, user, null);
+        Company company2 = new Company(2L, "22222222222222", "Secos e Frios", "Mercado", 50, new Location("Maceio", "Alagoas", "Benedito Bentes"), "222-222-2222", "Mercado especializado em secos, queijos e vinhos", "company@example.com", CompanyType.PRIVATE_ENTERPRISE, user, null);
 
         List<Company> companies = Arrays.asList(company1, company2);
 
