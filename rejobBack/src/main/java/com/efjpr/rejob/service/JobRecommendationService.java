@@ -83,7 +83,11 @@ public class JobRecommendationService {
             jobSimilarities.put(job, similarity);
         }
 
-        return jobSimilarities.entrySet().stream().sorted(Map.Entry.<Job, Double>comparingByValue().reversed()).map(Map.Entry::getKey).collect(Collectors.toList());
+        return jobSimilarities.entrySet().stream()
+                .sorted(Map.Entry.<Job, Double>comparingByValue().reversed())
+                .limit(4)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     public double similarity(Employee employee, Job job) {
