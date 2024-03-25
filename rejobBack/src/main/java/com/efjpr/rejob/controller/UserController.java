@@ -42,7 +42,7 @@ public class UserController {
 
     @Operation(description = "Informações do usuário logado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "200", description = "Informações retornadas com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não é um usuário")
     })
     @GetMapping("/me")
@@ -105,7 +105,7 @@ public class UserController {
 
     @Operation(description = "Deleta um usuário")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário deletado com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhum usuário com esse id foi encontrado"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })

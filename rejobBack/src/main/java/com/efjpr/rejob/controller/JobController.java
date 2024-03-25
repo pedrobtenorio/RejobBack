@@ -30,7 +30,7 @@ public class JobController {
 
     @Operation(description = "Cria uma vaga de emprego")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Vaga criada com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Vaga criada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Colaborador com esse id não foi encontrado"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
@@ -138,7 +138,7 @@ public class JobController {
 
     @Operation(description = "Deleta uma vaga")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Vaga deletada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Vaga deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhuma vaga com esse id foi encontrada"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
