@@ -32,7 +32,7 @@ public class UserController {
 
     @Operation(description = "Retorna todos os usuários")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Todos usuários retornados com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Usuários retornados com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
     })
     @GetMapping
@@ -62,7 +62,7 @@ public class UserController {
         }
     }
 
-    @Operation(description = "Busca funcionário por id e retorna")
+    @Operation(description = "Retorna funcionário pelo seu id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Funcionário retornado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Não autorizado / Token inválido")
