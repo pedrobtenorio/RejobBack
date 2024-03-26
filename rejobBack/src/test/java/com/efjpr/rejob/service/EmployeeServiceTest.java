@@ -96,11 +96,4 @@ class EmployeeServiceTest {
         assertEquals(employee, foundEmployee);
     }
 
-   /* @Test
-    void testFindByUserNotFound() {
-
-        when(employeeRepository.findByUser(user)).thenReturn(Optional.empty());
-
-        assertThrows(UsernameNotFoundException.class, () -> employeeService.findByUser(user));
-    }*/
 }

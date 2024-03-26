@@ -162,7 +162,7 @@ public class JobControllerTest {
         existingJob.setCompanyLocation(new Location("Recife", "Pernambuco", "Boa Viagem"));
 
         // Mockando o retorno do jobService.updateJob para retornar um objeto Job
-        Job updatedJob = new Job();
+        Job updatedJob = job;
         updatedJob.setId(1L);
         updatedJob.setJobTitle(existingJob.getJobTitle());
         updatedJob.setCompanyLocation(existingJob.getCompanyLocation());

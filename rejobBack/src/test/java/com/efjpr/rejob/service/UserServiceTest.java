@@ -118,17 +118,6 @@ public class UserServiceTest {
         assertEquals(id, result.getId());
     }
 
-  /*  @Test
-    void testGetCollaborator() {
-
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
-        when(collaboratorService.findByUser(user)).thenReturn(collaborator);
-
-        Collaborator result = userService.getCollaborator(id);
-
-        assertEquals(collaborator, result);
-    }*/
-
     @Test
     void testGetEmployee() {
 

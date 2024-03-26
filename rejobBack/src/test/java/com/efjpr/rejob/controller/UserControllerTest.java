@@ -181,17 +181,6 @@ public class UserControllerTest {
         assertEquals(company, response.getBody());
     }
 
-     /*@Test
-   public void testGetCollaboratorByUserId() {
-
-        when(userService.getCollaborator(id)).thenReturn(collaborator);
-
-        ResponseEntity<CollaboratorGetRequest> response = userController.getCollaboratorByUserId(id);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(collaborator, response.getBody());
-    }*/
-
     @Test
     public void testUpdateUser() {
         User updatedUser = user;
