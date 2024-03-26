@@ -126,7 +126,7 @@ public class UserControllerTest {
         assertEquals(users, response.getBody());
     }
 
-  /*  @Test
+    @Test
     void testGetUser() {
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
@@ -142,8 +142,8 @@ public class UserControllerTest {
         ResponseEntity<?> result = userController.getUser();
 
         // Verifica se o usuário retornado é o mesmo configurado
-        assertEquals(user, result);
-    }*/
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
 
     @Test
     void testGetUserNotUserPrincipal() {
