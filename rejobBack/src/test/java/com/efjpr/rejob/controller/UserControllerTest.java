@@ -182,6 +182,25 @@ public class UserControllerTest {
     }
 
     @Test
+    void testGetCollaboratorByUserId() {
+
+        CollaboratorGetRequest collaboratorGetRequest = CollaboratorGetRequest.builder()
+                .user(user)
+                .collaboratorType(CollaboratorType.ONG)
+                .jobTitle("Developer")
+                .companyId(id)
+                .collaboratorId(id)
+                .build();
+
+        when(userService.getCollaborator(id)).thenReturn(collaboratorGetRequest);
+
+        ResponseEntity<CollaboratorGetRequest> response = userController.getCollaboratorByUserId(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(collaboratorGetRequest, response.getBody());
+    }
+
+    @Test
     public void testUpdateUser() {
         User updatedUser = user;
         updatedUser.setPhoneNumber("098-765-4321");
