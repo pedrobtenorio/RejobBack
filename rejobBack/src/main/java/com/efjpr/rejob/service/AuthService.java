@@ -72,7 +72,7 @@ public class AuthService {
 
         employeeService.create(request, user);
 
-        // funçao de enviar e-mail de boas-vindas para Empregado
+        // funçao de enviar e-mail de boas-vindas para Egresso
         // Context context = new Context();
         // emailService.sendEmailWithHtmlTemplate(user.getEmail(), "Boas-Vindas", "bemvindo_empregado.html", context);
 
