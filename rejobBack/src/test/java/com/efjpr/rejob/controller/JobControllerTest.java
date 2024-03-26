@@ -155,20 +155,25 @@ public class JobControllerTest {
         assertEquals(jobResponse, response.getBody());
     }
 
-  /*  @Test
+    @Test
     void testUpdateJob() {
-        Job updatedJob = job;
-        createJobResponse()
-        updatedJob.setJobTitle("Tesoureiro");
-        updatedJob.setCompanyLocation(new Location("Recife", "Pernambuco", "Boa Viagem"));
+        JobCreate existingJob = new JobCreate();
+        existingJob.setJobTitle("Tesoureiro");
+        existingJob.setCompanyLocation(new Location("Recife", "Pernambuco", "Boa Viagem"));
 
-        when(jobService.updateJob(id, updatedJob)).thenReturn(updatedJob);
+        // Mockando o retorno do jobService.updateJob para retornar um objeto Job
+        Job updatedJob = new Job();
+        updatedJob.setId(1L);
+        updatedJob.setJobTitle(existingJob.getJobTitle());
+        updatedJob.setCompanyLocation(existingJob.getCompanyLocation());
 
-        ResponseEntity<Job> response = jobController.updateJob(id, updatedJob);
+        when(jobService.updateJob(id, existingJob)).thenReturn(updatedJob);
+
+        // Chamando o método do controller que utiliza o serviço de job
+        ResponseEntity<Job> response = jobController.updateJob(id, existingJob);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatedJob, response.getBody());
-    }*/
+    }
 
     @Test
     void testDeleteJob() {

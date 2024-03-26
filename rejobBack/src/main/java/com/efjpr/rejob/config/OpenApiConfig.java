@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         info = @Info(
                 contact = @Contact(
                         email = "mailrejob@gmail.com",
-                        url = "http://rejob.edge.net.br"
+                        url = "http://rejob.edge.net.br/"
                 ),
                 description = "Documentação OpenApi do sistema ReJob",
                 title = "Especificações OpenApi",
@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "http://rejob.edge.net.br"
+                        url = "http://rejob.edge.net.br/"
                 )
         },
         security = {
