@@ -161,30 +161,35 @@ class JobServiceTest {
         assertThrows(ResponseStatusException.class, () -> jobService.getJobById(id));
     }
 
-  /*  @Test
+    @Test
     void testUpdateJob() {
-        Job updatedJob = job;
-        updatedJob.setJobTitle("Marceneiro");
-        updatedJob.setJobDescription("Trabalhar com marcenaria");
-        updatedJob.setEducationLevel(EducationLevel.ENSINO_FUNDAMENTAL_COMPLETO);
+        Long jobId = 1L;
+        Long contactPersonId = 2L;
 
-        when(jobRepository.findById(id)).thenReturn(Optional.of(updatedJob));
-        when(jobRepository.save(updatedJob)).thenReturn(updatedJob);
+        JobCreate updatedJob = new JobCreate();
+        updatedJob.setContactPersonId(contactPersonId);
+        updatedJob.setJobTitle("Software Engineer");
+        updatedJob.setEmploymentType("CLT");
+        updatedJob.setJobStatus(JobStatus.ACTIVE);
 
-        Job result = jobService.updateJob(id, updatedJob);
+        Job existingJob = new Job();
+        existingJob.setId(jobId);
+        existingJob.setJobTitle("Software Developer");
+        existingJob.setEmploymentType("PJ");
+        existingJob.setJobStatus(JobStatus.IN_PROGRESS);
 
-        verify(jobRepository, times(1)).save(updatedJob);
-        assertEquals(updatedJob.getJobTitle(), result.getJobTitle());
-    }*/
+        Collaborator contactPerson = new Collaborator();
+        contactPerson.setId(contactPersonId);
 
-  /*  @Test
-    void testUpdateJobNotFound() {
-        Job updatedJob = job;
+        when(jobRepository.findById(jobId)).thenReturn(Optional.of(existingJob));
+        when(collaboratorRepository.findById(contactPersonId)).thenReturn(Optional.of(contactPerson));
 
-        when(jobRepository.findById(2L)).thenReturn(Optional.empty());
+        Job updatedJobResult = jobService.updateJob(jobId, updatedJob);
 
-        assertThrows(ResponseStatusException.class, () -> jobService.updateJob(2L, updatedJob));
-    }*/
+        verify(jobRepository, times(1)).findById(jobId);
+        verify(collaboratorRepository, times(1)).findById(contactPersonId);
+        verify(jobRepository, times(1)).save(existingJob);
+    }
 
     @Test
     void testDeleteJob() {

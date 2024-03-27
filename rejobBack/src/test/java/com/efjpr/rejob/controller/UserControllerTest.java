@@ -181,16 +181,24 @@ public class UserControllerTest {
         assertEquals(company, response.getBody());
     }
 
-     /*@Test
-   public void testGetCollaboratorByUserId() {
+    @Test
+    void testGetCollaboratorByUserId() {
 
-        when(userService.getCollaborator(id)).thenReturn(collaborator);
+        CollaboratorGetRequest collaboratorGetRequest = CollaboratorGetRequest.builder()
+                .user(user)
+                .collaboratorType(CollaboratorType.ONG)
+                .jobTitle("Developer")
+                .companyId(id)
+                .collaboratorId(id)
+                .build();
+
+        when(userService.getCollaborator(id)).thenReturn(collaboratorGetRequest);
 
         ResponseEntity<CollaboratorGetRequest> response = userController.getCollaboratorByUserId(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(collaborator, response.getBody());
-    }*/
+        assertEquals(collaboratorGetRequest, response.getBody());
+    }
 
     @Test
     public void testUpdateUser() {

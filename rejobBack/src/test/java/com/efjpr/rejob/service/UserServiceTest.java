@@ -1,6 +1,7 @@
 package com.efjpr.rejob.service;
 
 import com.efjpr.rejob.domain.*;
+import com.efjpr.rejob.domain.Dto.CollaboratorGetRequest;
 import com.efjpr.rejob.domain.Enums.*;
 import com.efjpr.rejob.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,16 +119,27 @@ public class UserServiceTest {
         assertEquals(id, result.getId());
     }
 
-  /*  @Test
+    @Test
     void testGetCollaborator() {
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(userRepository.findById(id)).thenReturn(java.util.Optional.of(user));
         when(collaboratorService.findByUser(user)).thenReturn(collaborator);
 
-        Collaborator result = userService.getCollaborator(id);
+        CollaboratorGetRequest expectedCollaboratorGetRequest = CollaboratorGetRequest.builder()
+                .user(user)
+                .collaboratorType(CollaboratorType.ONG)
+                .jobTitle("Developer")
+                .companyId(1L)
+                .collaboratorId(1L)
+                .build();
 
-        assertEquals(collaborator, result);
-    }*/
+        CollaboratorGetRequest resultCollaboratorGetRequest = userService.getCollaborator(id);
+
+        assertEquals(expectedCollaboratorGetRequest.getUser(), resultCollaboratorGetRequest.getUser());
+
+        verify(userRepository, times(1)).findById(id);
+        verify(collaboratorService, times(1)).findByUser(user);
+    }
 
     @Test
     void testGetEmployee() {
