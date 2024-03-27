@@ -44,7 +44,11 @@ class AuthControllerTest {
         verify(authService, times(1)).register(request);
     }
 
-  /*  @Test
+    // Os dois testes a seguir estão comentados pois
+    // não estão funcionando devido a restrições de acesso
+    // por motivos de segurança (CollaboratorRegisterRequest)
+
+    /* @Test
     void testRegisterCollaborator() {
         MockitoAnnotations.openMocks(this);
         CollaboratorRegisterRequest request = new CollaboratorRegisterRequest();
@@ -58,19 +62,19 @@ class AuthControllerTest {
         verify(authService, times(1)).register(request);
     }*/
 
-//    @Test
-//    void testRegisterCompany() {
-//        MockitoAnnotations.openMocks(this);
-//        CompanyRegisterRequest request = new CompanyRegisterRequest();
-//        AuthResponseCompany response = new AuthResponseCompany("token", new Company());
-//        when(authService.register(request)).thenReturn(response);
-//
-//        ResponseEntity<AuthResponseCompany> result = authController.register(request);
-//
-//        assertEquals(HttpStatus.OK, result.getStatusCode());
-//        assertEquals(response, result.getBody());
-//        verify(authService, times(1)).register(request);
-//    }
+    /* @Test
+    void testRegisterCompany() {
+        MockitoAnnotations.openMocks(this);
+        CompanyRegisterRequest request = new CompanyRegisterRequest();
+        AuthResponseCompany response = new AuthResponseCompany("token", new Company());
+        when(authService.register(request)).thenReturn(response);
+
+        ResponseEntity<AuthResponseCompany> result = authController.register(request);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(response, result.getBody());
+        verify(authService, times(1)).register(request);
+    }*/
 
     @Test
     void testAuthenticate() {
